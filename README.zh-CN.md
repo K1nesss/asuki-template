@@ -104,10 +104,16 @@
 
 ### 按住它，打开彩蛋
 
-按住机甲两秒，它会朝你用力挣动，然后打开 persona 提供的彩蛋。在 asuki.cc 上是一个带音乐的 3D 场景；在你的 persona 里可以是任何东西，也可以没有。
+按住机甲两秒，它会朝你用力挣动，然后打开 persona 提供的彩蛋。在你的 persona 里可以是任何东西，也可以没有。在 asuki.cc 上，它是 **Afterglow**：一张 NERV 驾驶员卡浮在一道光线上方，光线随着 3D 模型的加载逐渐填满。把卡片往下拖进光线里，一片晚霞就会从中展开。
 
 <div align="center">
-<img src="docs/egg.gif" alt="按住机甲，页面退开，彩蛋在页面上打开" width="640">
+<img src="docs/egg.gif" alt="按住机甲，一张 NERV 驾驶员卡出现在光线上方，卡片被拖进光线，展开成一片晚霞" width="640">
+</div>
+
+接着一段短片会自动播放，配有专属音乐：驾驶员站在余晖里，目光会跟着你的鼠标移动。点击切换成海报，再点击继续播放，按 Esc 淡出回到页面。
+
+<div align="center">
+<img src="docs/afterglow.gif" alt="Afterglow：3D 的明日香站在红色晚霞中；点击后变成背后写着 AFTERGLOW 的海报，按 Esc 淡出回到页面" width="560">
 </div>
 
 ### 摸摸宠物
@@ -137,6 +143,14 @@
 一首歌，配一条像素波形，点击或拖动即可跳转。用 `track: null` 可以去掉它。
 
 <img src="docs/player.gif" alt="音乐播放器开始播放，点击波形跳转进度" width="100%">
+
+### 个人面板
+
+简介里的应用图标在悬停时会活过来：多邻国图标跳一下，火星从里面升起，落成一簇像素火焰，连胜天数随之滚动出现。GitHub 图标会弹出带有个人资料和实时数据的卡片。产出速率把本周的提交数和你最好的一周作比较。
+
+<div align="center">
+<img src="docs/bio.gif" alt="鼠标悬停在简介里的多邻国和网易云音乐图标上，然后移到 GitHub 图标，弹出个人资料卡片" width="528">
+</div>
 
 ### 查看社交账号
 
@@ -171,6 +185,10 @@
 ### 面板展开成页面
 
 每个带橙色角标的面板都能展开成完整页面：项目、贡献、里程碑和技术栈。面板会长大铺满屏幕，主页在后面暗下去；按 Esc、点击返回角标或浏览器的后退按钮，页面会缩回原来的面板。每个页面都有自己的地址，比如 `/milestones`，可以直接分享链接。
+
+<div align="center">
+<img src="docs/contributions.gif" alt="鼠标划过贡献热力图，每天都会显示一条提示；然后面板展开成包含历年贡献的页面" width="640">
+</div>
 
 <div align="center">
 <img src="docs/milestones.gif" alt="里程碑面板展开成按年份排列的时间线页面，然后缩回面板" width="640">
@@ -454,4 +472,4 @@ scripts/                check-persona、sprite-from-png、peaks 和构建辅助�
 
 ## 许可证
 
-代码采用 [MIT](LICENSE) 协议。示例 persona（Bit、Rook、驾驶员、鱼叉和网站图标）是原创的，采用相同协议，你可以随意复用或改造。`docs/` 里的图片展示的是 asuki.cc。其中的角色（明日香、2 号机和卡西乌斯之枪）不在 MIT 协议范围内，也不属于模板，请不要复用。
+代码采用 [MIT](LICENSE) 协议。示例 persona（Bit、Rook、驾驶员、鱼叉和网站图标）是原创的，采用相同协议，你可以随意复用或改造。`docs/` 里的图片展示的是 asuki.cc。其中的角色和彩蛋（明日香、2 号机、卡西乌斯之枪和 Afterglow 场景）不在 MIT 协议范围内，也不属于模板，请不要复用。

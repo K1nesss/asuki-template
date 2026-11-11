@@ -104,10 +104,16 @@ Hover over the mech and its eyes glow. Click it and they flare.
 
 ### Hold it for the Easter egg
 
-Hold the mech for two seconds and it strains toward you, then opens whatever Easter egg the persona gives it. On asuki.cc that is a 3D scene with its own music; in your persona it can be anything, or nothing.
+Hold the mech for two seconds and it strains toward you, then opens whatever Easter egg the persona gives it. In your persona it can be anything, or nothing. On asuki.cc it is **Afterglow**: a NERV card floats over a line of light that fills as the 3D model loads. Drag the card down into the line and a sunset opens out of it.
 
 <div align="center">
-<img src="docs/egg.gif" alt="The mech is held down, the page gives way and an Easter egg opens over it" width="640">
+<img src="docs/egg.gif" alt="The mech is held, a NERV pilot card appears over a line of light, and the card is dragged down into the line, which opens into a sunset" width="640">
+</div>
+
+Then a short film plays on its own, with its own music: the pilot in the afterglow, looking at you as you move the pointer. Click for a poster, click again to run on, and press Esc to fade back to the page.
+
+<div align="center">
+<img src="docs/afterglow.gif" alt="Afterglow: a 3D Asuka stands in a red sunset; a click turns it into a poster with AFTERGLOW lettering behind her, and Esc fades back to the page" width="560">
 </div>
 
 ### Pet the pet
@@ -137,6 +143,14 @@ Click the avatar and it turns over like a card on a spring, with a band of light
 One song, with a pixel waveform you can click or drag to seek. Leave it out with `track: null`.
 
 <img src="docs/player.gif" alt="The music player starts playing and the waveform is clicked to seek" width="100%">
+
+### The profile panel
+
+The app marks in the bio come alive on hover: the Duolingo mark hops, embers rise out of it, settle into a pixel flame, and the streak rolls up beside it. The GitHub icon opens a card with your profile and live counts. The output rate compares this week's commits with your best week.
+
+<div align="center">
+<img src="docs/bio.gif" alt="Hovering the Duolingo and NetEase marks in the bio, then the GitHub icon, which opens a profile card" width="528">
+</div>
 
 ### Peek at the accounts
 
@@ -171,6 +185,10 @@ Take a case off the shelf and it opens: the disc slides out and seats, and the s
 ### Panels open into pages
 
 Every panel with an orange corner opens a full page: Projects, Contributions, Milestones and Loadout. The panel grows into the page while the homepage darkens behind it, and Esc, the back corner or the browser's Back button shrinks it back into its panel. Each page has its own address, such as `/milestones`, so it can be linked to.
+
+<div align="center">
+<img src="docs/contributions.gif" alt="Hovering the contribution heatmap shows a note for each day; the panel then opens into a page with every year since the first" width="640">
+</div>
 
 <div align="center">
 <img src="docs/milestones.gif" alt="The milestones panel grows into a full page with a timeline by year, then shrinks back into the panel" width="640">
@@ -454,4 +472,4 @@ Add this repo as a remote (`git remote add upstream https://github.com/K1nesss/a
 
 ## License
 
-The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in `docs/` show asuki.cc. Its characters (Asuka, Unit-02 and the Spear of Cassius) are not covered by the MIT licence and are not part of the template; please don't reuse them.
+The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in `docs/` show asuki.cc. Its characters and its Easter egg (Asuka, Unit-02, the Spear of Cassius and the Afterglow scene) are not covered by the MIT licence and are not part of the template; please don't reuse them.
