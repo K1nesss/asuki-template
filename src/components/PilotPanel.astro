@@ -1,0 +1,203 @@
+---
+import persona from '@persona';
+import { SPRITES } from '../lib/scene';
+import { spriteSize } from '../lib/persona';
+import { spriteLayers } from '../lib/pixels';
+import type { PageData } from '../server/page-data';
+import Icon from './Icon.astro';
+import { SOCIALS } from '../lib/icons';
+import AppMark from './AppMark.astro';
+
+interface Props { data: PageData }
+const { data } = Astro.props;
+const s = data.content.status;
+// the avatar is the top of the footer sprite: her head (the persona says how many rows, and how to crop them)
+const petSz = spriteSize(SPRITES.pet);
+const headRows = persona.pet.head?.rows ?? Math.round(petSz.h * 0.55);
+const headView = (persona.pet.head?.view ?? [0, 0, petSz.w, headRows]).join(' ');
+const head = spriteLayers(SPRITES.pet, SPRITES.pet.rows.slice(0, headRows));
+const gh = data.github;
+const rate = gh?.syncRate ?? 0;
+const lit = Math.round(rate / 5);
+const ramp = ['#e1201b', '#e83a1f', '#ef5322', '#f56a28', '#ff7a3d'];
+const links = data.content.links;
+const send = links.find((l) => l.kind === 'contact');
+const others = links.filter((l) => l !== send && l.kind !== 'source');
+const shortStatus = (s.status_text || '').split(' ')[0];
+// the fixed row of accounts after the red button: each takes the first social link on its site, the rest follow as plain links
+const host = (u: unknown) => { try { return new URL(String(u)).hostname.toLowerCase(); } catch { return ''; } };
+const taken = new Set<unknown>();
+const socials = SOCIALS.map((so) => {
+  const l = others.find((x) => !taken.has(x) && so.match.test(host(x.url)));
+  if (l) taken.add(l);
+  return { ...so, link: l };
+});
+const rest = others.filter((l) => !taken.has(l));
+const ghLink = socials[0].link;
+const login = gh?.user ?? (ghLink ? String(ghLink.url).replace(/^https?:\/\/(www\.)?github\.com\//, '').split('/')[0] : '');
+// the account shown on a social card, read from its link: @handle, or the Bilibili UID
+const handleOf = (key: string, url: string) => {
+  try {
+    const seg = new URL(url).pathname.split('/').filter(Boolean);
+    if (key === 'bilibili') return /^\d+$/.test(seg[0] ?? '') ? `UID ${seg[0]}` : '';
+    const h = (seg[0] ?? '').replace(/^@/, '');
+    return h ? `@${h}` : '';
+  } catch { return ''; }
+};
+const shortUrl = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/[?#].*$/, '').replace(/\/$/, '');
+// the date of a newest post: "3 Nov", with the year when it isn't this year
+const when = (iso: string) => {
+  const d = new Date(iso), y = d.getUTCFullYear() !== new Date().getUTCFullYear();
+  return Number.isNaN(+d) ? '' : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', ...(y ? { year: 'numeric' } : {}), timeZone: data.tz });
+};
+const num = (n: number | null | undefined) => (n == null ? '—' : n.toLocaleString('en-US'));
+
+// the bio: paragraphs split on a blank line; {duolingo} and {netease} become app marks, kept on one line
+// with the word before them
+type Seg = { t: string; nw?: boolean } | { word: string; app: 'duolingo' | 'netease' };
+const bio: Seg[][] = String(s.bio || '')
+  .split(/\n\s*\n/)
+  .map((p) => p.trim())
+  .filter(Boolean)
+  .map((p) => {
+    const bits = p.split(/\s*\{(duolingo|netease)\}/);
+    const out: Seg[] = [];
+    bits.forEach((b, k) => {
+      if (k % 2 === 0) { out.push({ t: b }); return; }
+      const prev = out.pop() as { t: string };
+      const m = prev.t.match(/^([\s\S]*?)(\S*)$/)!;
+      if (m[1]) out.push({ t: m[1] });
+      out.push({ word: m[2], app: b as 'duolingo' | 'netease' });
+    });
+    // a hyphenated word (Jay-Z) never breaks at its hyphen
+    return out.flatMap((g) => ('t' in g ? g.t.split(/(\S+-\S+)/).filter(Boolean).map((t, k) => ({ t, nw: k % 2 === 1 || /^\S+-\S+$/.test(t) })) : [g]));
+  });
+const duo = data.duolingo, ne = data.netease;
+const markHref = {
+  duolingo: duo.user ? `https://www.duolingo.com/profile/${encodeURIComponent(duo.user)}` : '',
+  netease: ne.id ? `https://music.163.com/#/user/home?id=${encodeURIComponent(ne.id)}` : '',
+};
+const markValue = { duolingo: duo.streak, netease: ne.level };
+// the hover card's strip: the last 20 weeks, each week's total as a level 0 to 4
+const ghWeeks = (() => {
+  const sums = (gh?.weeks ?? []).slice(-20).map((w) => w.reduce((a, d) => a + d.count, 0));
+  const max = Math.max(1, ...sums);
+  const out = sums.map((v) => (v ? Math.max(1, Math.ceil((v / max) * 4)) : 0));
+  return out.length ? out : Array(20).fill(0);
+})();
+---
+<aside class="pilot-panel br dith" data-in style="--in:3" aria-labelledby="pilot-name">
+  <div class="id">
+    <button class="avatar" type="button" aria-pressed="false" aria-label={`Avatar: pixel ${persona.pet.name}.${persona.avatarBack ? ' Turn it over' : ''}`} data-avatar>
+      <span class="flip" data-flip>
+        <span class="face front">
+          <span class="scan"></span>
+          <svg class="px" viewBox={headView} aria-hidden="true">
+            {head.map((l) => <path fill={l.c} d={l.d} />)}
+          </svg>
+        </span>
+        {persona.avatarBack && <span class="face back"><img src={persona.avatarBack} alt="" width="96" height="96" loading="lazy" decoding="async" /></span>}
+      </span>
+    </button>
+    <div>
+      <div class="lbl" style="margin-bottom:6px">{persona.words.panel}</div>
+      <h2 class="name" id="pilot-name">{s.display_name || persona.name}</h2>
+    </div>
+  </div>
+  {bio.length > 0 && (
+    <div class="bio">
+      {bio.map((segs) => (
+        <p>{segs.map((g) => ('t' in g ? (g.nw ? <span class="nw">{g.t}</span> : g.t) : <span class="nw">{g.word}{'\u00a0'}<AppMark app={g.app} href={markHref[g.app]} value={markValue[g.app]} /></span>))}</p>
+      ))}
+    </div>
+  )}
+
+  <dl class="facts">
+    <div><dt title="Status"><Icon name="signal" /><span class="sr">Status</span></dt><dd>{s.status_text || '—'}</dd></div>
+    <div><dt title="Commits in the last 30 days"><Icon name="commit" /><span class="lbl">30d</span><span class="sr">Commits in the last 30 days</span></dt><dd>{gh ? gh.commits30d : '—'}</dd></div>
+  </dl>
+  <dl class="facts-3">
+    <div><dt title="Status"><Icon name="signal" /><span class="sr">Status</span></dt><dd>{shortStatus || '—'}</dd></div>
+    <div><dt title="Commits in the last 30 days"><Icon name="commit" /><span class="lbl">30d</span><span class="sr">Commits in the last 30 days</span></dt><dd>{gh ? gh.commits30d : '—'}</dd></div>
+    <div><dt title="Output rate"><Icon name="gauge" /><span class="sr">Output rate</span></dt><dd style="color:var(--orange)">{gh ? `${rate.toFixed(1)}%` : '—'}</dd></div>
+  </dl>
+
+  <div>
+    <div class="sync-head"><span class="lbl with-ico"><Icon name="gauge" />Output rate</span><b>{gh ? `${rate.toFixed(1)}%` : '—'}</b></div>
+    <div class="gauge" role="img" aria-label={gh ? `Output rate ${rate.toFixed(1)} percent` : 'Output rate unavailable'}>
+      {Array.from({ length: 20 }, (_, i) => (
+        <i class={i < lit ? 'on' : ''} style={`--g:${ramp[Math.min(4, Math.floor(i / 3))]}`}></i>
+      ))}
+    </div>
+    <div class="lbl gauge-note">This week’s commits vs. my best week</div>
+  </div>
+
+  <div class="contact" id="contact">
+    {send && <a class="send" href={send.url}><Icon name="mail" loop="x" /><span>{send.label}</span><Icon name="out" loop="ne" /></a>}
+    {socials.map((so) => {
+      const mark = <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d={so.d} /></svg>;
+      if (!so.link) return <span class="iconbtn big off" aria-hidden="true">{mark}</span>;
+      const url = String(so.link.url);
+      if (so.key !== 'github') {
+        // the others: a card with the account below the button; with a profile (fetched, or X's typed in
+        // admin) it carries the avatar, counts and the newest post, like the GitHub card
+        const prof = data.socials[so.key as keyof typeof data.socials];
+        const handle = prof?.handle || handleOf(so.key, url);
+        return (
+          <span class="peek below" data-peek>
+            <a class="iconbtn big" href={url} rel="me noopener" aria-label={`${so.label}${handle ? `: ${handle}` : ''}`} aria-describedby={`${so.key}-card`} style={`--b:${so.hex}`}>{mark}</a>
+            <a class:list={['peek-card', prof ? 'soc' : 'mini']} id={`${so.key}-card`} href={url} rel="noopener" tabindex="-1" style={`--b:${so.hex}`}>
+              <span class="pk-top">
+                {/* other sites' pictures: no referrer (Bilibili refuses them to other sites), and the brand mark if one fails to load */}
+                {prof?.avatar && <img src={prof.avatar} alt="" width="40" height="40" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.hidden=true;this.nextElementSibling.hidden=false" />}
+                <span class="pk-mark" hidden={!!prof?.avatar}>{mark}</span>
+                <span>
+                  <b>{prof?.name || so.label}{prof?.level != null && <span class="pk-lv">LV{prof.level}</span>}</b>
+                  {handle && <span class="pk-at">{handle}</span>}
+                </span>
+              </span>
+              {prof?.bio && <span class="pk-bio">{prof.bio}</span>}
+              {prof && prof.stats.length > 0 && (
+                <span class:list={['pk-stats', { one: prof.stats.length === 1 }]}>
+                  {prof.stats.map((st) => <span><span class="lbl">{st.label}</span><b data-count={st.n}>{num(st.n)}</b></span>)}
+                </span>
+              )}
+              {prof?.latest && (
+                <span class="pk-latest">
+                  <span class="pk-thumb">
+                    {prof.latest.thumb && <img src={prof.latest.thumb} alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()" />}
+                  </span>
+                  <span><b>{prof.latest.title}</b><span class="pk-at">{when(prof.latest.at)}</span></span>
+                </span>
+              )}
+              <span class="pk-foot"><span>{shortUrl(url)}</span><Icon name="out" /></span>
+            </a>
+          </span>
+        );
+      }
+      // GitHub: a profile card opens below the button on hover or keyboard focus (a first tap on a phone)
+      return (
+        <span class="peek below" data-peek>
+          <a class="iconbtn big" href={so.link.url} rel="me noopener" aria-label={`GitHub: @${login}`} aria-describedby="gh-card" style={`--b:${so.hex}`}>{mark}</a>
+          <a class="peek-card gh" id="gh-card" href={so.link.url} rel="noopener" tabindex="-1">
+            <span class="pk-top">
+              {gh?.avatar ? <img src={gh.avatar} alt="" width="40" height="40" loading="lazy" decoding="async" /> : <span class="pk-mark">{mark}</span>}
+              <span><b>{gh?.name || s.display_name || login}</b><span class="pk-at">@{login}</span></span>
+            </span>
+            {gh?.bio && <span class="pk-bio">{gh.bio}</span>}
+            <span class="pk-stats one">
+              <span><span class="lbl"><Icon name="commit" />Contributions</span><b data-count={gh ? gh.total : undefined}>{num(gh?.total)}</b></span>
+            </span>
+            <span class="pk-cells heat" aria-hidden="true">{ghWeeks.map((lv, k) => <i class={lv ? `l${lv}` : ''} style={`--k:${k}`}></i>)}</span>
+            <span class="pk-foot"><span>github.com/{login}</span><Icon name="out" /></span>
+          </a>
+        </span>
+      );
+    })}
+    {rest.map((l) => (
+      <a class="iconbtn big" href={l.url} rel="me noopener" aria-label={String(l.label)} data-tip={String(l.label)}>
+        <Icon name="out" loop="ne" />
+      </a>
+    ))}
+  </div>
+</aside>

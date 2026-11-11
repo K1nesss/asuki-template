@@ -1,0 +1,12 @@
+---
+// A 9x9 pixel icon in the current text colour.
+// loop: draws a second copy just outside the box, so a hover can slide the icon out one side while
+// the copy slides in from the other ('x': out to the right, 'ne': out to the top right).
+import { ICONS, type IconName } from '../lib/icons';
+interface Props { name: IconName; class?: string; label?: string; loop?: 'x' | 'ne' }
+const { name, class: cls, label, loop } = Astro.props;
+const d = ICONS[name];
+---
+<svg class:list={['ico', cls, loop && `loop-${loop}`]} viewBox="0 0 9 9" role={label ? 'img' : undefined} aria-label={label} aria-hidden={label ? undefined : 'true'}>
+  {loop ? <g class="lp"><path d={d} /><path d={d} transform={loop === 'x' ? 'translate(-11 0)' : 'translate(-11 11)'} /></g> : <path d={d} />}
+</svg>

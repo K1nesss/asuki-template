@@ -1,0 +1,290 @@
+/* The full pages (Pages.astro, src/scripts/pages.ts) and the orange "more" corners that open them. */
+
+/* ---------- the "more" corner: the bottom-right bracket of a panel, which grows and shows an arrow */
+.has-more::after { display: none; }
+.cards { position: relative; }
+.more { position: absolute; right: -1px; bottom: -1px; width: 34px; height: 34px; z-index: 4; color: var(--orange); }
+.more:hover, .more:focus-visible { color: var(--orange); }
+.more::after { content: ''; position: absolute; right: 0; bottom: 0; width: 10px; height: 10px; border: solid currentColor; border-width: 0 2px 2px 0; transition: width .55s var(--spring), height .55s var(--spring); }
+.more .ico { position: absolute; right: 6px; bottom: 6px; width: 9px; height: 9px; opacity: 0; translate: -3px 3px; transition: opacity .2s, translate .5s var(--spring); }
+.more:hover::after, .more:focus-visible::after { width: 22px; height: 22px; }
+.more:hover .ico, .more:focus-visible .ico { opacity: 1; translate: 0 0; }
+.more:active::after { width: 16px; height: 16px; }
+.more:focus-visible { outline-offset: -2px; }
+@media (hover: none) { .more .ico { opacity: 1; translate: 0 0; } .more::after { width: 18px; height: 18px; } }
+
+/* ---------- covering the homepage */
+html { scrollbar-gutter: stable; }
+html[data-lock] { overflow: hidden; }
+/* covered: hidden, except while a page is growing out of it or shrinking back in */
+html[data-paged]:not([data-morph]) .page { visibility: hidden; }
+/* the homepage darkens behind a page as it grows, and comes back as it shrinks */
+.page-scrim { position: fixed; inset: 0; z-index: 99; background: #000; opacity: 0; pointer-events: none; transition: opacity .45s ease; }
+.page-scrim.on { opacity: .6; transition-duration: .6s; }
+
+.views { position: fixed; inset: 0; z-index: 100; background-color: var(--bg); background-image: radial-gradient(var(--dot) 0.8px, transparent 0.9px); background-size: 3px 3px; will-change: clip-path; transition: opacity .18s; }
+.views[hidden] { display: none; }
+.views.leaving { opacity: 0; }
+.view { position: absolute; inset: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; padding: 34px 48px 48px; visibility: hidden; }
+.view.on { visibility: visible; }
+.view:focus { outline: none; }
+.view:not(.pv) > :not(.back, .heat-tip) { max-width: 1180px; margin-left: auto; margin-right: auto; }
+@media (max-width: 559px) { .view { padding: 46px 16px 32px; } }
+
+/* the frame that springs between a panel and the whole screen */
+.page-frame { position: fixed; z-index: 120; pointer-events: none; border: 1px solid var(--line-2); opacity: 0; transition: opacity .25s; }
+.page-frame.on { opacity: 1; }
+.page-frame::before, .page-frame::after { content: ''; position: absolute; width: 14px; height: 14px; border: solid var(--orange); }
+.page-frame::before { left: -1px; top: -1px; border-width: 2px 0 0 2px; }
+.page-frame::after { right: -1px; bottom: -1px; border-width: 0 2px 2px 0; }
+
+/* the way back: the page's own top-left corner bracket, with an arrow in it */
+.view .back { position: fixed; left: 14px; top: 14px; width: 40px; height: 40px; color: var(--orange); z-index: 20; }
+.view .back:hover { color: var(--orange); }
+.view .back::before { content: ''; position: absolute; left: 0; top: 0; width: 12px; height: 12px; border: solid currentColor; border-width: 2px 0 0 2px; transition: width .55s var(--spring), height .55s var(--spring); }
+.view .back .ico { position: absolute; left: 9px; top: 9px; width: 11px; height: 11px; transition: translate .5s var(--spring); }
+.view .back:hover::before, .view .back:focus-visible::before { width: 24px; height: 24px; }
+.view .back:hover .ico { translate: -2px -2px; }
+@media (max-width: 559px) { .view .back { left: 8px; top: 8px; } }
+
+.view .ph { display: flex; align-items: baseline; gap: 14px; margin-bottom: 22px; padding-left: 30px; }
+.view .ph h2 { margin: 0; font: 900 44px/.9 var(--font-display); letter-spacing: .01em; color: var(--text-strong); text-transform: uppercase; }
+@media (max-width: 559px) { .view .ph { padding-left: 34px; } .view .ph h2 { font-size: 34px; } }
+
+/* entry: the parts marked [data-s] rise in one after another; exit: the page sinks away */
+.view.enter [data-s] { animation: rise .7s var(--spring-soft) both; animation-delay: calc(var(--d, 0) * 55ms + 120ms); }
+@keyframes rise { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+.view.exit { animation: sink .3s ease-in both; }
+@keyframes sink { to { opacity: 0; translate: 0 8px; } }
+
+/* ---------- Projects: a shelf of cases */
+.pv { padding: 0; overflow: hidden; --cs: clamp(240px, min(28vw, 44vh), 400px); --dp: calc(var(--cs) * .085); --cy: 38%; }
+.shelf { position: absolute; inset: 0; perspective: calc(var(--cs) * 4.8); perspective-origin: 50% var(--cy); touch-action: pan-y; cursor: grab; }
+.shelf.drag { cursor: grabbing; }
+.case { position: absolute; left: 50%; top: var(--cy); width: var(--cs); height: var(--cs); margin: calc(var(--cs) / -2) 0 0 calc(var(--cs) / -2); transform-style: preserve-3d; will-change: transform; transform: translate3d(200vw, 0, 0); }
+.case > div { position: absolute; backface-visibility: hidden; }
+.case { --em: var(--muted); }
+.case.state-live { --em: var(--red-hot); } .case.state-beta { --em: var(--orange); }
+.case .front, .case .back2 { inset: 0; }
+.case .front { transform: translateZ(calc(var(--dp) / 2)); background: #0d0b0c; border: 1px solid #2f2528; overflow: hidden; }
+.case .front canvas, .case .front img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.case .front canvas { image-rendering: pixelated; color: var(--em); }
+.case .front img { object-fit: cover; }
+.case .front::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, #ffffff14, transparent 38%, transparent 62%, #ffffff08); pointer-events: none; } /* the plastic catches the light */
+.case .play { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; background: #0b0a0bcc; border: 1px solid #3a2e30; color: #f2ece8; transition: opacity .3s, scale .5s var(--spring); }
+.case .play .ico { width: 18px; height: 18px; }
+.case.open .play { opacity: 0; scale: .6; }
+
+/* the record: black vinyl cut with grooves, a label in the case's state colour. The record turns (pages.ts
+   spins .vinyl); the light on it (.sheen) stays put, the way a lamp's reflection sits still on a turning record. */
+.case .disc { left: 4%; top: 4%; width: 92%; height: 92%; border-radius: 50%; backface-visibility: visible; transform: translateZ(0); pointer-events: none; }
+.case.open .disc { pointer-events: auto; cursor: pointer; }
+.disc .vinyl, .disc .sheen { position: absolute; inset: 0; border-radius: 50%; }
+.disc .vinyl { background:
+    radial-gradient(circle, transparent 30.5%, #ffffff10 31%, transparent 32.5%, transparent 95%, #2a2326 96%, #0b090a 98.5%),
+    repeating-radial-gradient(circle, #0d0b0c 0 1.1px, #1a1517 1.1px 2.2px);
+  box-shadow: 0 0 0 1px #000, 0 10px 30px var(--disc-shade, #0008); }
+/* on a light page a near-black halo reads as a smudge: the record casts a soft, faint shadow instead */
+:root[data-theme='light'] .disc .vinyl { --disc-shade: #2a1a1a24; }
+.disc .vinyl::before { content: ''; position: absolute; inset: 9%; border-radius: 50%; background: conic-gradient(from 200deg, transparent, #ffffff0a 6%, transparent 13%, transparent 70%, #ffffff07 76%, transparent 82%); } /* a little wear, so the grooves show the turning */
+.disc .lab { position: absolute; left: 34%; top: 34%; width: 32%; height: 32%; border-radius: 50%; background: radial-gradient(circle, #0b090a 0 5%, transparent 5.5%), radial-gradient(circle, transparent 0 84%, #0006 85% 88%, transparent 89%), var(--em);
+  display: grid; place-items: center; align-content: center; gap: 4%; color: #0b090a; overflow: hidden; }
+.disc .lab .mark { position: absolute; left: 50%; top: 20%; width: 13%; height: auto; margin: 0 0 0 -6.5%; fill: currentColor; }
+.disc .lab b { position: absolute; top: 61%; left: 14%; right: 14%; font: 700 clamp(6px, calc(var(--cs) * .026), 10px)/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.disc .sheen { background: conic-gradient(from 10deg, transparent 0, #ffffff16 7%, transparent 15%, transparent 50%, #ffffff10 57%, transparent 65%);
+  -webkit-mask: radial-gradient(circle, transparent 33%, #000 34%, #000 95%, transparent 96%); mask: radial-gradient(circle, transparent 33%, #000 34%, #000 95%, transparent 96%); pointer-events: none; }
+
+/* the screen: a monitor that comes on like a tube (a bright line, then the picture opening out of it) */
+.screen { position: absolute; left: 0; top: 0; z-index: 3; cursor: pointer; will-change: transform; }
+.screen[hidden] { display: none; }
+.screen .tube { position: absolute; inset: 0; background: #070606; border: 1px solid #3a2e30; overflow: hidden; transform-origin: 50% 50%; }
+.screen::before, .screen::after { content: ''; position: absolute; width: 14px; height: 14px; border: solid var(--orange); z-index: 2; opacity: var(--on, 0); pointer-events: none; }
+.screen::before { left: -5px; top: -5px; border-width: 2px 0 0 2px; }
+.screen::after { right: -5px; bottom: -5px; border-width: 0 2px 2px 0; }
+.screen video, .screen .static { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.screen video { object-fit: contain; background: #000; }
+.screen .static { image-rendering: pixelated; opacity: .5; }
+.screen .nosig { position: absolute; left: 50%; top: 50%; translate: -50% -50%; display: inline-flex; align-items: center; gap: 10px; padding: 8px 12px; background: #070606d9; border: 1px solid #3a2e30; color: var(--orange); font: 600 12px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; white-space: nowrap; }
+.screen .nosig .ico { width: 12px; height: 12px; }
+.screen[data-src] .static, .screen[data-src] .nosig, .screen:not([data-src]) video, .screen:not([data-src]) .ctl { display: none; }
+.screen .hold { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; background: #0b0a0bcc; border: 1px solid #3a2e30; color: #f2ece8; opacity: 0; scale: .6; transition: opacity .25s, scale .45s var(--spring); pointer-events: none; }
+.screen .hold .ico { width: 18px; height: 18px; }
+.screen.held .hold { opacity: 1; scale: 1; }
+/* the transport: elapsed / length, and a seek bar you can click or drag. It fades back to a thin line while
+   the picture plays untouched, and stays up while held, scrubbing, or on touch screens. */
+.screen .ctl { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 6px; display: grid; gap: 2px; background: linear-gradient(transparent, #000c); opacity: 0; transition: opacity .35s; cursor: default; }
+.screen:hover .ctl, .screen.held .ctl, .screen.scrub .ctl, .screen .ctl:focus-within { opacity: 1; }
+.screen .time { display: flex; gap: 6px; font: 500 11px/1 var(--font-mono); letter-spacing: .08em; color: #c9bfba; }
+.screen .time b { color: #f2ece8; font-weight: 500; }
+.screen .time i { font-style: normal; color: #6d6064; }
+.screen .seek { position: relative; height: 18px; cursor: pointer; touch-action: none; --p: 0; }
+.screen .seek:focus-visible { outline: 1px solid var(--orange); outline-offset: 2px; }
+.screen .trk { position: absolute; left: 0; right: 0; top: 50%; height: 3px; translate: 0 -50%; background: #ffffff2b; transition: height .3s var(--spring); }
+.screen .trk i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--p) * 100%); background: var(--orange); }
+.screen .knob { position: absolute; top: 50%; left: calc(var(--p) * 100%); width: 10px; height: 10px; translate: -50% -50%; background: var(--orange); box-shadow: 0 0 0 2px #0009; scale: 0; transition: scale .35s var(--spring); }
+.screen .seek:hover .trk, .screen.scrub .trk { height: 5px; }
+.screen .seek:hover .knob, .screen.scrub .knob, .screen .seek:focus-visible .knob { scale: 1; }
+/* untouched, the bar stays on as a thin line along the bottom edge */
+.screen:not(:hover):not(.held):not(.scrub) .ctl { opacity: 1; background: none; }
+.screen:not(:hover):not(.held):not(.scrub) .time { opacity: 0; }
+.screen .time { transition: opacity .35s; }
+@media (hover: none) { .screen .ctl, .screen:not(.held) .ctl { background: linear-gradient(transparent, #000c); } .screen .time { opacity: 1 !important; } .screen .knob { scale: 1; } }
+/* while it winds to a new spot the picture tears and rolls a little, like a tape searching */
+.screen .tube::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; background: repeating-linear-gradient(0deg, #0000 0 2px, #0006 2px 3px); transition: opacity .2s; }
+.screen.seeking .tube::after { opacity: 1; animation: roll .35s steps(6) infinite; }
+.screen.seeking video { filter: contrast(1.15) brightness(1.12) saturate(.85); }
+@keyframes roll { to { background-position: 0 18px; } }
+.screen .flash { position: absolute; inset: 0; background: #fff4ec; opacity: var(--flash, 0); pointer-events: none; mix-blend-mode: screen; }
+.case .back2 { transform: rotateY(180deg) translateZ(calc(var(--dp) / 2)); background: #120e10; border: 1px solid #2f2528; }
+.case .spine { top: 0; left: 50%; width: var(--dp); height: var(--cs); margin-left: calc(var(--dp) / -2); transform: rotateY(-90deg) translateZ(calc(var(--cs) / 2)); background: #171214; border: 1px solid #2f2528;
+  display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 10px 0; color: var(--em); }
+.case .spine .mark { margin: 0; }
+.case .spine span { writing-mode: vertical-rl; rotate: 180deg; font: 600 clamp(12px, calc(var(--cs) * .05), 17px)/1 var(--font-head); letter-spacing: .12em; text-transform: uppercase; color: #f2ece8; white-space: nowrap; overflow: hidden; max-height: calc(var(--cs) - 40px); }
+.case .edge { top: 0; left: 50%; width: var(--dp); height: var(--cs); margin-left: calc(var(--dp) / -2); transform: rotateY(90deg) translateZ(calc(var(--cs) / 2)); background: repeating-linear-gradient(90deg, #1b1517 0 2px, #241c1f 2px 3px); }
+.case .top, .case .bot { left: 0; top: 50%; width: var(--cs); height: var(--dp); margin-top: calc(var(--dp) / -2); background: #1a1416; }
+.case .top { transform: rotateX(90deg) translateZ(calc(var(--cs) / 2)); }
+.case .bot { transform: rotateX(-90deg) translateZ(calc(var(--cs) / 2)); }
+/* cases further along the shelf are dimmed on their own faces. (A black sheet floated a pixel in front of
+   the cover used to do this, but scaled down it sat so close to the cover that graphics cards drew the two
+   in the wrong order, blacking out parts of a case.) */
+.case > :not(.disc) { filter: brightness(calc(1 - var(--shade, 0))); }
+.floor { position: absolute; left: 0; right: 0; top: calc(var(--cy) + var(--cs) / 2 + 22px); height: 1px; background: linear-gradient(90deg, transparent, var(--line-2) 20%, var(--line-2) 80%, transparent); }
+.info { position: absolute; left: 0; right: 0; top: calc(var(--cy) + var(--cs) / 2 + 48px); display: grid; justify-items: center; gap: 16px; padding: 0 16px; text-align: center; pointer-events: none; }
+.info a, .info button { pointer-events: auto; }
+.pinfo { display: grid; justify-items: center; gap: 10px; }
+.pinfo[hidden] { display: none; }
+.pinfo .nm { margin: 0; max-width: calc(100vw - 32px); font: 900 76px/.9 var(--font-display); color: var(--text-strong); text-transform: uppercase; letter-spacing: .01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* always two lines tall (longer text is cut with an ellipsis), so the index ticks never move */
+.pinfo .bl { margin: 0; height: 3.2em; color: var(--text-3); font-size: 14px; line-height: 1.6; max-width: 52ch; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.pinfo .row { display: flex; align-items: center; gap: 4px; }
+.pinfo .st { display: inline-flex; align-items: center; min-width: 112px; justify-content: flex-end; margin-right: 8px; font: 500 12px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.pinfo .st .mark { width: 8px; height: 8px; margin-right: 8px; }
+.pinfo .iconbtn { min-width: 38px; min-height: 38px; }
+.pinfo .iconbtn .ico { width: 14px; height: 14px; }
+.pinfo .iconbtn .brand { width: 18px; height: 18px; }
+.pinfo .iconbtn.off { color: var(--line-2); cursor: default; }
+.pinfo .iconbtn.off:hover { color: var(--line-2); }
+.pinfo .st.state-live { color: var(--red-hot); } .pinfo .st.state-beta { color: var(--orange); }
+.info > * { transition: opacity .16s, translate .5s var(--spring-soft); }
+.info.swap > .pinfo:not([hidden]) { opacity: 0; translate: 0 8px; transition: opacity .1s, translate .1s; }
+/* while a case plays (pages.ts sets --o from 0 to 1 on a spring and moves .info down under the screen) the
+   name shrinks from its top edge and everything under it closes up by the height it gave back */
+.info { --o: 0; --nh: 0px; will-change: transform; }
+.pinfo .nm { transform-origin: 50% 0; scale: calc(1 - .38 * var(--o)); }
+.pinfo .row, .pinfo .bl, .info > .ticks { translate: 0 calc(var(--nh) * -.38 * var(--o)); }
+.info > .ticks { transition: opacity .16s; }
+.ticks { display: flex; gap: 5px; }
+.ticks button { width: 14px; height: 16px; padding: 0; border: 0; cursor: pointer; background: linear-gradient(var(--line-2), var(--line-2)) center / 100% 3px no-repeat; transition: width .5s var(--spring); }
+.ticks button:hover { background-image: linear-gradient(var(--muted), var(--muted)); }
+.ticks button.on { width: 26px; background-image: linear-gradient(var(--orange), var(--orange)); }
+@media (max-width: 559px) {
+  .pv { --cs: min(62vw, 34vh, 250px); --cy: 34%; }
+  .info { top: calc(var(--cy) + var(--cs) / 2 + 40px); gap: 14px; }
+  .pinfo .nm { font-size: 48px; }
+  .pinfo .bl { font-size: 13px; }
+}
+@media (max-height: 640px) and (min-width: 560px) { .pinfo .nm { font-size: 52px; } .pinfo .bl { font-size: 13px; } }
+
+/* ---------- Contributions: every year */
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 26px; }
+.stats > div { background: var(--panel); padding: 14px 16px; display: grid; gap: 8px; }
+.stats b { font: 700 28px/1 var(--font-head); color: var(--text-strong); font-variant-numeric: tabular-nums; }
+.stats .lbl { display: flex; align-items: center; gap: 7px; }
+.cal-empty { padding: 20px 0; }
+.cal-empty[hidden] { display: none; }
+.years { display: grid; gap: 4px; }
+.mos, .yr { display: grid; grid-template-columns: 116px minmax(0, 1fr) 72px; gap: 18px; }
+.mos { margin-bottom: 4px; }
+.mos div, .yr .g { display: grid; grid-template-columns: repeat(var(--cols, 53), minmax(0, 1fr)); gap: 2px; }
+.mos span { font-size: 10px; color: var(--muted-2); white-space: nowrap; }
+.yr { align-items: center; padding: 8px 0; border-top: 1px solid var(--line); }
+.yr .y { font: 900 58px/.8 var(--font-display); color: transparent; -webkit-text-stroke: 1px var(--line-2); transition: color .3s, -webkit-text-stroke-color .3s; }
+.yr.now .y { color: var(--text-strong); -webkit-text-stroke-color: transparent; }
+.yr:hover .y { color: var(--orange); -webkit-text-stroke-color: transparent; }
+.yr .g { grid-auto-flow: column; grid-template-rows: repeat(7, auto); }
+.cal i { display: block; aspect-ratio: 1; background: var(--heat-0); }
+.cal i.l1 { background: var(--heat-1); } .cal i.l2 { background: var(--heat-2); } .cal i.l3 { background: var(--heat-3); } .cal i.l4 { background: var(--heat-4); }
+.cal i.gap { visibility: hidden; }
+.cal i.on { outline: 1px solid var(--text-strong); outline-offset: -1px; }
+.view.enter .yr .g { animation: wipe 1s cubic-bezier(.3, .7, .2, 1) both; animation-delay: calc(var(--row) * 80ms + 260ms); }
+@keyframes wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2px 0 0); } }
+.yr .tot { text-align: right; }
+.yr .tot b { font: 700 18px/1 var(--font-head); color: var(--text-strong); font-variant-numeric: tabular-nums; }
+.vyear { display: none; }
+@media (max-width: 899px) { .stats { grid-template-columns: 1fr 1fr; } .mos, .yr { grid-template-columns: 76px minmax(0, 1fr) 54px; gap: 10px; } .yr .y { font-size: 40px; } }
+@media (max-width: 559px) {
+  .years, .mos { display: none; }
+  .vyear { display: block; }
+  .stats { margin-bottom: 14px; }
+  .stats > div { padding: 12px; }
+  .stats b { font-size: 22px; }
+  .ychips { position: sticky; top: -46px; z-index: 5; display: flex; gap: 6px; overflow-x: auto; margin: 0 -16px 10px; padding: 10px 16px; background: var(--bg); scrollbar-width: none; }
+  .ychips button { flex-shrink: 0; border: 1px solid var(--line-2); background: var(--panel); padding: 8px 12px; font: 700 15px/1 var(--font-head); color: var(--muted); cursor: pointer; }
+  .ychips button[aria-pressed='true'] { color: var(--bg); background: var(--orange); border-color: var(--orange); }
+  .vg { display: grid; grid-template-columns: 34px repeat(7, 15px); gap: 3px; justify-content: start; }
+  .vg span { font-size: 9px; color: var(--muted-2); line-height: 1; align-self: start; }
+  .vg.slide { animation: vslide .55s var(--spring-soft) both; }
+  .vhead { display: flex; align-items: baseline; gap: 18px; margin-bottom: 12px; }
+  .vhead > b { font: 900 46px/.8 var(--font-display); color: var(--text-strong); }
+  .vhead span b { font: 700 18px/1 var(--font-head); color: var(--text-strong); }
+}
+@keyframes vslide { from { opacity: 0; translate: 24px 0; } to { opacity: 1; translate: 0 0; } }
+
+/* ---------- Milestones: the year held at the left while the timeline runs */
+.ms { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 32px; }
+.bigyear { position: sticky; top: 0; height: 170px; overflow: hidden; }
+.bigyear .roll { position: absolute; left: 0; top: 0; font: 900 150px/1 var(--font-display); color: var(--text-strong); letter-spacing: -.01em; transition: translate .7s var(--spring); }
+.bigyear .roll.out { translate: 0 -110%; }
+.bigyear .roll.in { translate: 0 110%; transition: none; }
+.tlw { position: relative; }
+.tlw::before { content: ''; position: absolute; left: 13px; top: 6px; bottom: 40vh; width: 2px; background: var(--line); }
+.tlw .fill { position: absolute; left: 13px; top: 6px; width: 2px; height: 0; background: var(--red-hot); box-shadow: 0 0 8px var(--red); }
+.tl2 { position: relative; margin: 0; padding: 0 0 40vh; list-style: none; }
+.tl2 .yh { position: relative; padding: 18px 0 10px 44px; font: 700 13px/1 var(--font-head); color: var(--orange); letter-spacing: .14em; }
+.tl2 .yh::before { content: ''; position: absolute; left: 9px; top: 18px; width: 10px; height: 10px; background: var(--bg); border: 2px solid var(--orange); }
+.tl2 li.m { position: relative; display: grid; grid-template-columns: 28px 64px minmax(0, 1fr); gap: 16px; align-items: start; padding: 14px 0; }
+.tl2 .node { width: 28px; height: 28px; display: grid; place-items: center; background: var(--panel); border: 1px solid var(--line-2); color: var(--orange); position: relative; z-index: 1; transition: scale .5s var(--spring), border-color .2s; }
+.tl2 li.m:hover .node { scale: 1.18; border-color: var(--orange); }
+.tl2 .mo { padding-top: 9px; }
+.tl2 .tx { font: 500 19px/1.3 var(--font-head); color: var(--text-strong); padding-top: 3px; min-width: 0; }
+.tl2 .tx a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.tl2 .tx a:hover { color: var(--orange); }
+.tl2 .tx small { display: block; margin-top: 4px; font: 400 12px/1.5 var(--font-mono); color: var(--text-3); }
+@media (max-width: 899px) {
+  .ms { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .bigyear { height: 86px; z-index: 4; background: var(--bg); top: -34px; }
+  .bigyear .roll { font-size: 76px; }
+  .tl2 li.m { grid-template-columns: 28px minmax(0, 1fr); }
+  .tl2 .mo { display: none; }
+  .tl2 .tx { font-size: 16px; }
+}
+@media (max-width: 559px) { .bigyear { top: -46px; } .bigyear .roll { left: 40px; } }
+
+/* ---------- Loadout: everything, by kind */
+.rack { display: grid; gap: 26px; }
+.rack h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 10px; }
+.rack h3::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(148px, 1fr)); gap: 8px; margin: 0; padding: 0; list-style: none; }
+.tile { position: relative; display: grid; gap: 12px; align-content: start; padding: 14px; border: 1px solid var(--line); background: var(--panel); transition: translate .5s var(--spring), border-color .2s; }
+.tile:hover { translate: 0 -3px; border-color: var(--line-2); }
+.tile .lg { width: 30px; height: 30px; color: var(--muted); transition: color .25s, scale .55s var(--spring); }
+.tile .lg .brand, .tile .lg .ico { width: 100%; height: 100%; display: block; }
+.tile:hover .lg { color: var(--b, var(--orange)); scale: 1.12; }
+.tile b { font: 600 14px/1.1 var(--font-head); color: var(--text-strong); overflow-wrap: anywhere; }
+.tile .gz { display: flex; gap: 2px; }
+.tile .gz i { width: 100%; height: 4px; background: var(--panel-2); }
+.tile .gz i.on { background: var(--orange); }
+.tile:hover .gz i.on { background: var(--red-hot); }
+.tile .yrs { position: absolute; right: 12px; top: 14px; font-size: 10px; color: var(--muted-2); }
+@media (max-width: 559px) {
+  .tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .tile { padding: 10px; gap: 9px; }
+  .tile .lg { width: 24px; height: 24px; }
+  .tile b { font-size: 12px; }
+  .tile .yrs { right: 8px; top: 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view.enter [data-s], .view.enter .yr .g, .view.exit, .vg.slide { animation: none !important; }
+  .bigyear .roll { transition: none; }
+}

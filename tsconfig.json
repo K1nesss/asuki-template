@@ -1,0 +1,11 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "worker-configuration.d.ts", "**/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "types": ["./worker-configuration.d.ts"],
+    "resolveJsonModule": true,
+    // the build points @persona at the persona in use (astro.config.mjs); for the editor, the example's types are the same
+    "paths": { "@site/*": ["./src/*"], "@persona": ["./persona/example/index.ts"], "@persona/*": ["./persona/example/*"] }
+  }
+}

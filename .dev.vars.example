@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local development. .dev.vars is git-ignored.
+GITHUB_TOKEN=
+# The Instagram and YouTube cards. Left empty, those cards show the account without its profile.
+INSTAGRAM_TOKEN=
+YOUTUBE_KEY=
+VISIT_SALT=dev-salt-change-me
+# Lets you call /admin/* from localhost without Cloudflare Access. Ignored on any other host.
+ADMIN_DEV_BYPASS=1

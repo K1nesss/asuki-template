@@ -1,0 +1,151 @@
+---
+import type { PageData } from '../server/page-data';
+import Icon from './Icon.astro';
+import Player from './Player.astro';
+import persona from '@persona';
+import { brand, GITHUB_MARK, STATE_MARK as MARK, type IconName } from '../lib/icons';
+
+interface Props { data: PageData }
+const { data } = Astro.props;
+const { missions, milestones, loadout } = data.content;
+// home shows the first few of each; the full lists live on their own pages (Pages.astro), opened from the
+// orange corner at the bottom right of each panel
+const HOME = { missions: 4, milestones: 8, loadout: 12 };
+const KIND: Record<string, string> = { started: 'Started', shipped: 'Shipped', joined: 'Joined', learned: 'Learned', wrote: 'Wrote' };
+const kindIcon = (v: unknown): IconName => (String(v) in KIND ? (String(v) as IconName) : 'milestones');
+// milestones by year: the year is written once, on the first line of that year
+// a project without a screenshot gets a quiet glow instead: light coming up from below the bottom
+// edge, like the banner's dusk, drawn with an ordered dither in the project's status colour.
+// One mask (128x50 cells of 3px) shared by every card; runs of lit cells are merged to keep it small.
+const B4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const GW = 128, GH = 50;
+const glowMask = (() => {
+  let d = '';
+  for (let y = 0; y < GH; y++) {
+    let run = -1;
+    for (let x = 0; x <= GW; x++) {
+      const r = Math.hypot((x + 0.5 - GW / 2) / (GW * 0.5), (GH + 4 - y) / (GH * 0.9));
+      const v = x < GW ? Math.pow(Math.max(0, 1 - r), 2) * 1.4 : 0;
+      const on = (B4[(y & 3) * 4 + (x & 3)] + 1) / 17 < v;
+      if (on && run < 0) run = x;
+      if (!on && run >= 0) { d += `M${run} ${y}h${x - run}v1h-${x - run}z`; run = -1; }
+    }
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${GW} ${GH}" shape-rendering="crispEdges"><path d="${d}"/></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+})();
+const ghRepo = (r: unknown) => (r ? `https://github.com/${String(r).replace(/^https?:\/\/github\.com\//, '')}` : '');
+const gh = data.github;
+// the heatmap: the last 52 weeks (Sunday first, like GitHub), with month labels and a hover note per day.
+// Without GitHub data yet, the same calendar is drawn empty so the months still read right.
+const today = new Intl.DateTimeFormat('en-CA', { timeZone: data.tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+function emptyYear() {
+  const t = new Date(`${today}T00:00:00Z`);
+  const start = new Date(t);
+  start.setUTCDate(t.getUTCDate() - t.getUTCDay() - 51 * 7);
+  return Array.from({ length: 52 }, (_, w) => Array.from({ length: 7 }, (_, d) => {
+    const x = new Date(start);
+    x.setUTCDate(start.getUTCDate() + w * 7 + d);
+    return { date: iso(x), count: 0, level: 0 };
+  }));
+}
+const weeks = (gh?.weeks ?? emptyYear()).slice(-52);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthOf = (w: { date: string }[]) => (w[0]?.date ? Number(w[0].date.slice(5, 7)) - 1 : -1);
+const starts = weeks.map((w, i) => i > 0 && monthOf(w) !== monthOf(weeks[i - 1]));
+// label a column where a new month begins; the very first column only if the next label is far enough away
+const labels = weeks.map((w, i) => (starts[i] || (i === 0 && starts.slice(1, 3).every((s) => !s)) ? MON[monthOf(w)] : ''));
+// phones show only the last 26 weeks: give their first column a label too, unless a month starts right after
+const narrowFirst = !starts[26] && starts.slice(27, 29).every((x) => !x) ? MON[monthOf(weeks[26] ?? [])] : '';
+const longDate = (d: string) => new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${d}T00:00:00Z`));
+const countText = (n: number) => (!gh ? 'No data yet' : n === 0 ? 'No contributions' : n === 1 ? '1 contribution' : `${n} contributions`);
+---
+<main>
+  {persona.track && <Player />}
+  <section class="missions" data-in style={`--in:5;--glow:${glowMask}`} id="projects" aria-labelledby="projects-h">
+    <h2 class="sr" id="projects-h">Projects</h2>
+    <div class="cards">
+      {missions.slice(0, HOME.missions).map((m, i) => {
+        const repo = ghRepo(m.repo), url = m.url ? String(m.url) : '';
+        const state = String(m.state);
+        return (
+          <article class={`card state-${state}`} style={`--i:${i}`}>
+            <div class="shot">
+              {m.image ? <img src={String(m.image)} alt="" loading="lazy" decoding="async" /> : <span class="glow" aria-hidden="true"></span>}
+            </div>
+            <div class="txt">
+              <div class="row">
+                <span class={`state state-${state}`} data-tip={state} aria-label={state}>{MARK[state] && <svg class="mark" viewBox="0 0 7 7" aria-hidden="true"><path d={MARK[state]} /></svg>}</span>
+                <strong>{url ? <a href={url} rel="noopener">{m.name}</a> : m.name}</strong>
+                {/* both links always hold their place; one that isn't there yet is drawn greyed out */}
+                <span class="links">
+                  {repo
+                    ? <a class="iconbtn" href={repo} rel="noopener" aria-label={`${m.name} source on GitHub`} data-tip="Source"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d={GITHUB_MARK} /></svg></a>
+                    : <span class="iconbtn off" aria-hidden="true"><svg class="brand" viewBox="0 0 24 24"><path d={GITHUB_MARK} /></svg></span>}
+                  {url
+                    ? <a class="iconbtn" href={url} rel="noopener" aria-label={`${m.name} live site`} data-tip="Live"><Icon name="out" loop="ne" /></a>
+                    : <span class="iconbtn off" aria-hidden="true"><Icon name="out" /></span>}
+                </span>
+              </div>
+              {m.blurb && <p class="blurb">{m.blurb}</p>}
+            </div>
+          </article>
+        );
+      })}
+      <a class="more" href="/projects" data-open="projects" aria-label="All projects"><Icon name="out" /></a>
+    </div>
+  </section>
+
+  <section class="panel br has-more dith sync" data-in style="--in:6" aria-labelledby="sync-h">
+    <h2 class="sr" id="sync-h">Contributions</h2>
+    <div class="weeks" role="img" aria-label={gh ? `${gh.total} GitHub contributions in the last 12 months` : 'GitHub contributions, not loaded yet'}>
+      {weeks.map((w, i) => (
+        <div>
+          {labels[i] && <b class="mo" aria-hidden="true">{labels[i]}</b>}
+          {i === 26 && narrowFirst && <b class="mo n-only" aria-hidden="true">{narrowFirst}</b>}
+          {w.map((d) => (d.date > today
+            ? <i class="gap"></i>
+            : <i class={d.level ? `l${d.level}` : ''} data-level={d.level || undefined} data-n={countText(d.count)} data-on={longDate(d.date)}></i>))}
+        </div>
+      ))}
+    </div>
+    <div class="heat-tip" role="tooltip" hidden><b></b> <span></span></div>
+    <a class="more" href="/contributions" data-open="contributions" aria-label="Every year"><Icon name="out" /></a>
+  </section>
+
+  <div class="pair" data-in style="--in:7">
+    <section class="panel br has-more" id="milestones" aria-labelledby="milestones-h">
+      <h2 class="sr" id="milestones-h">Milestones</h2>
+      <ol class="miles">
+        {milestones.slice(0, HOME.milestones).map((r, i, all) => {
+          const first = i === 0 || all[i - 1].year !== r.year;
+          const kind = KIND[String(r.kind)] ?? String(r.kind);
+          return (
+            <li class:list={[{ first, now: i === 0 }]}>
+              {first ? <time datetime={String(r.year)}>{r.year}</time> : <span class="yr" aria-hidden="true"></span>}
+              <span class="node" title={kind}><Icon name={kindIcon(r.kind)} /><span class="sr">{kind}</span></span>
+              <span class="what">{r.url ? <a href={String(r.url)}>{r.text}</a> : r.text}</span>
+            </li>
+          );
+        })}
+      </ol>
+      <a class="more" href="/milestones" data-open="milestones" aria-label="All milestones"><Icon name="out" /></a>
+    </section>
+    <section class="panel br has-more" aria-labelledby="loadout-h">
+      <h2 class="sr" id="loadout-h">Loadout</h2>
+      <ul class="chips">
+        {loadout.slice(0, HOME.loadout).map((l) => {
+          const b = brand(String(l.name));
+          return (
+            <li style={b ? `--brand:${b.hex}` : undefined}>
+              {b ? <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d={b.d} /></svg> : <Icon name="chip" />}
+              <span>{l.name}</span>
+            </li>
+          );
+        })}
+      </ul>
+      <a class="more" href="/loadout" data-open="loadout" aria-label="Full loadout"><Icon name="out" /></a>
+    </section>
+  </div>
+</main>

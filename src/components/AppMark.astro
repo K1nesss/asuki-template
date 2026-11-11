@@ -1,0 +1,41 @@
+---
+// An app's icon set into the bio after a word (Duolingo after "English", NetEase Cloud Music after "music").
+// On hover (a first tap on a phone) the icon hops, embers rise out of it and glide into a pixel glyph over it,
+// the glyph catches and a number rolls up beside it: the Duolingo streak by a flame, the NetEase level by headphones.
+// src/scripts/marks.ts runs it. With no account the icon is greyed out; with no number it is a plain link.
+import { DUOLINGO, NETEASE, cells, type IconName } from '../lib/icons';
+
+interface Props {
+  app: 'duolingo' | 'netease';
+  href: string;
+  value: number | null;
+}
+const { app, href, value } = Astro.props;
+const A = {
+  duolingo: { name: 'Duolingo', glyph: 'flame' as IconName, core: '#fff3c4', hot: '#ffc800', warm: '#ff9600', hotLight: '#ffb400', warmLight: '#f07800', pre: '', say: (n: string) => `${n}-day streak` },
+  netease: { name: 'NetEase Cloud Music', glyph: 'headphones' as IconName, core: '#ffe2de', hot: '#ff8a80', warm: '#e8382f', hotLight: '#f25a4f', warmLight: '#c8281f', pre: 'Lv', say: (n: string) => `level ${n}` },
+}[app];
+const shown = value != null ? value.toLocaleString('en-US') : '';
+const Tag = href ? 'a' : 'span';
+const label = shown ? `${A.name}: ${A.say(shown)}` : A.name;
+---
+<Tag
+  class:list={['appmark', app, { off: !href }]}
+  href={href || undefined}
+  rel={href ? 'me noopener' : undefined}
+  aria-label={href ? label : undefined}
+  aria-hidden={href ? undefined : 'true'}
+  data-mark={href && value != null ? '' : undefined}
+>
+  {app === 'duolingo' ? (
+    <svg class="app" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="4.6" fill={DUOLINGO.hex} /><rect x="3" y="3" width="18" height="18" fill="#fff" /><path d={DUOLINGO.d} fill={DUOLINGO.hex} /></svg>
+  ) : (
+    <svg class="app" viewBox="0 0 24 24" aria-hidden="true"><defs><mask id="ne-swirl"><circle cx="12" cy="12" r="11.4" fill="#fff" /><path d={NETEASE.d} fill="#000" /></mask></defs><rect width="24" height="24" rx="5.5" fill={NETEASE.hex} /><g transform="translate(3 3) scale(.75)"><rect width="24" height="24" fill="#fff" mask="url(#ne-swirl)" /></g></svg>
+  )}
+  {href && value != null && (
+    <span class="burst" aria-hidden="true" hidden style={`--core:${A.core};--hot:${A.hot};--warm:${A.warm};--hot-light:${A.hotLight};--warm-light:${A.warmLight}`}>
+      <span class="glyph">{cells(A.glyph).map((c) => { const [x, y, e] = c.split(','); return <i class:list={[{ e: e === '1' }]} style={`--x:${x};--y:${y}`}></i>; })}</span>
+      {A.pre && <small>{A.pre}</small>}<b data-to={value}>{shown}</b>
+    </span>
+  )}
+</Tag>

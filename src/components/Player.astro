@@ -1,0 +1,35 @@
+---
+// The music player: one track, a pixel waveform you can click or drag to seek, and the time.
+// The audio is only fetched once someone presses play.
+import Icon from './Icon.astro';
+import persona from '@persona';
+
+const TRACK = persona.track!;
+
+const mmss = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
+---
+<section class="player panel br" data-in style="--in:4" id="player" aria-labelledby="player-h" data-track={JSON.stringify(TRACK)}>
+  <h2 class="sr" id="player-h">Music</h2>
+  <button class="play" type="button" aria-label="Play" aria-pressed="false" data-play>
+    <Icon name="play" class="i-play" /><Icon name="pause" class="i-pause" />
+  </button>
+  <div class="meta">
+    <strong>{TRACK.title}</strong>
+    <span>{TRACK.artist}</span>
+  </div>
+  <div
+    class="wave"
+    role="slider"
+    tabindex="0"
+    aria-label="Seek"
+    aria-valuemin="0"
+    aria-valuemax={Math.round(TRACK.duration)}
+    aria-valuenow="0"
+    aria-valuetext={`0:00 of ${mmss(TRACK.duration)}`}
+    data-wave
+  >
+    <canvas aria-hidden="true"></canvas>
+  </div>
+  <span class="time"><span data-elapsed>0:00</span><span class="of">/</span><span>{mmss(TRACK.duration)}</span></span>
+  <audio preload="none" src={TRACK.src} data-audio></audio>
+</section>

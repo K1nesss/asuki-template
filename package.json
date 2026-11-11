@@ -1,0 +1,31 @@
+{
+  "name": "asuki-template",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.4.4",
+    "@fontsource/big-shoulders-display": "^5.3.0",
+    "@fontsource/chakra-petch": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "astro": "^7.4.5",
+    "simple-icons": "^16.36.0"
+  },
+  "devDependencies": {
+    "pngjs": "^7.0.0",
+    "wrangler": "^4.157.0"
+  },
+  "scripts": {
+    "dev": "node scripts/check-persona.mjs && astro dev",
+    "check": "node scripts/check-persona.mjs",
+    "build": "node scripts/check-persona.mjs && astro build && node scripts/pack-egg.mjs",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "types": "wrangler types",
+    "sprite": "node scripts/sprite-from-png.mjs",
+    "peaks": "node scripts/peaks.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

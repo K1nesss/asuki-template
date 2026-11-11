@@ -1,0 +1,56 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "homebase",
+  // Our own entry: Astro's handler for pages, plus the API, the admin API and the hourly cron.
+  "main": "./src/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "observability": { "enabled": true },
+
+  // D1 holds the content and counters. The Worker creates its own tables on first run,
+  // so there is no migration step in the deploy.
+  // Leave database_id out and `wrangler deploy` (Workers Builds) creates the database for you,
+  // or run `npx wrangler d1 create homebase` and paste the id here.
+  "d1_databases": [{ "binding": "DB", "database_name": "homebase" }],
+
+  // Warm the GitHub and weather snapshots every hour, so no visitor waits on them.
+  "triggers": { "crons": ["7 * * * *"] },
+
+  "vars": {
+    // GITHUB_USER: your GitHub login. The contribution graph, commit count and output rate come from it.
+    "GITHUB_USER": "",
+    // The app marks in the bio. Left empty, a mark shows greyed out with nothing on hover.
+    // DUOLINGO_USER: your Duolingo username (duolingo.com/profile/<this>); the hover shows its streak.
+    // NETEASE_ID: the number in your NetEase Cloud Music profile link (music.163.com/#/user/home?id=<this>);
+    // the hover shows its level.
+    "DUOLINGO_USER": "",
+    "NETEASE_ID": "",
+    // The social cards. YOUTUBE_HANDLE: the name after @ in your channel link; BILIBILI_UID: the number in
+    // space.bilibili.com/<this>. Instagram: see BEHOLD_FEED.
+    // X_USER: the name after x.com/ (read through FxTwitter, no key needed).
+    "X_USER": "",
+    // BEHOLD_FEED: the id at the end of your Behold JSON feed link (feeds.behold.so/<this>) for the Instagram
+    // card. Or leave it empty and use the INSTAGRAM_TOKEN secret (needs a Meta app with a business portfolio).
+    "BEHOLD_FEED": "",
+    "YOUTUBE_HANDLE": "",
+    "BILIBILI_UID": "",
+    // LOCATION_LABEL: the city shown in the header. TIMEZONE: an IANA name such as Europe/London or Asia/Tokyo.
+    "LOCATION_LABEL": "",
+    "TIMEZONE": "UTC",
+    // where you live: the banner's sky, sunrise, sunset and weather follow it
+    "LAT": "51.51",
+    "LON": "-0.13",
+    // Cloudflare Access, which guards /admin/*. Fill these in after you create the Access app.
+    "ACCESS_TEAM": "",
+    "ACCESS_AUD": ""
+  },
+
+  // Uncomment once your domain is on your Cloudflare account.
+  // "routes": [{ "pattern": "example.com", "custom_domain": true }]
+
+  // Secrets (never in this file):
+  //   npx wrangler secret put GITHUB_TOKEN   fine-grained, read-only, no repository access
+  //   npx wrangler secret put VISIT_SALT     any long random string
+  //   npx wrangler secret put INSTAGRAM_TOKEN the 60-day token from your Meta app (Instagram > API setup with
+  //                                          Instagram business login > Generate token); renewed by itself
+  //   npx wrangler secret put YOUTUBE_KEY    a Google Cloud API key with only YouTube Data API v3 enabled
+}

@@ -1,0 +1,56 @@
+---
+// The bottom pet system: the persona's pet on a strip of caution tape, and the prop she throws.
+import persona from '@persona';
+import { SPRITES } from '../lib/scene';
+import { spriteLayers } from '../lib/pixels';
+import { spriteSize } from '../lib/persona';
+import type { PageData } from '../server/page-data';
+import Icon from './Icon.astro';
+
+interface Props { data: PageData }
+const { data } = Astro.props;
+const body = spriteLayers(SPRITES.pet);
+const { w: pw, h: ph } = spriteSize(SPRITES.pet);
+// drawn at 1.5 px a cell on wide screens and 1 px on phones (site.css)
+const petSize = `--pet-w:${Math.round(pw * 1.5)}px;--pet-h:${Math.round(ph * 1.5)}px;--pet-w1:${pw}px;--pet-h1:${ph}px;--pet-o:${pw / 2}px`;
+const prop = persona.prop;
+const propArt = prop ? spriteLayers(prop.sprite) : [];
+const pn = persona.pet.name;
+const lines = data.content.pet_lines.map((r) => String(r.text));
+const source = data.content.links.find((l) => l.kind === 'source');
+---
+<footer class="foot" data-in style="--in:8">
+  <div class="yard" id="yard" data-lines={JSON.stringify(lines)}>
+    <div
+      class="pet"
+      id="pet"
+      role="button"
+      tabindex="0"
+      style={petSize}
+      aria-label={`Pixel ${pn}. Stroke her to pet her; arrow keys walk her, Enter pets her.`}
+    >
+      <svg class="px" viewBox={`0 0 ${pw} ${ph}`} aria-hidden="true"><g class="flip">{body.map((l) => <path fill={l.c} d={l.d} />)}</g></svg>
+    </div>
+    {prop && (
+      <div
+        class="prop"
+        id="prop"
+        role="button"
+        tabindex="0"
+        aria-label={`${prop.name}. Drag it to ${pn}, or press Enter to hand it to her, and she will throw it.`}
+      >
+        <svg class="px" viewBox={`0 0 ${prop.sprite.rows[0].length} ${prop.sprite.rows.length}`} preserveAspectRatio="none" aria-hidden="true">{propArt.map((l) => <path fill={l.c} d={l.d} />)}</svg>
+      </div>
+    )}
+    <div class="bubble" id="bubble" aria-live="polite">{lines[0] ?? ''}</div>
+    <div class="tape"></div>
+  </div>
+  <div class="lbl legal">
+    <span>© {new Date().getFullYear()} {persona.name}</span>
+    <span class="counts">
+      <span class="with-ico" title="Visitors"><Icon name="eye" /><span data-visits>{data.content.counters.visits ?? 0}</span><span class="sr">visits</span></span>
+      <span class="with-ico pets" title="Times she has been petted"><Icon name="heart" /><span data-pets>{data.content.counters.pets ?? 0}</span><span class="sr">pets</span></span>
+      {source && <a class="with-ico only-wide" href={source.url} title="Source code" aria-label="Source code"><Icon name="code" /></a>}
+    </span>
+  </div>
+</footer>

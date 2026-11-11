@@ -1,0 +1,120 @@
+---
+import { env } from 'cloudflare:workers';
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-700.css';
+import '@fontsource/chakra-petch/latin-600';
+import '@fontsource/chakra-petch/latin-700';
+import '@fontsource/big-shoulders-display/latin-900';
+import '../styles/tokens.css';
+import '@persona/theme.css';
+import '../styles/site.css';
+import '../styles/pages.css';
+import Hero from '../components/Hero.astro';
+import PilotPanel from '../components/PilotPanel.astro';
+import Modules from '../components/Modules.astro';
+import Footer from '../components/Footer.astro';
+import Pages from '../components/Pages.astro';
+import Icon from '../components/Icon.astro';
+import persona from '@persona';
+import { getPageData } from '../server/page-data';
+
+const data = await getPageData(env, Astro.locals.cfContext);
+const s = data.content.status;
+const name = s.display_name || persona.name;
+const description = s.bio || `${name}'s cockpit on the web.`;
+// the ticker is repeated until it is long enough to fill a wide screen, then run twice end to end so the loop has no seam
+const lap: string[] = [];
+while (data.ticker.length && lap.length < 8) lap.push(...data.ticker);
+const ticker = [...lap, ...lap];
+Astro.response.headers.set('cache-control', 'public, max-age=0, s-maxage=60');
+---
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{persona.name}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0a0b" />
+    <meta property="og:title" content={name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={`${persona.url.replace(/\/$/, '')}/`} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline define:vars={{ key: persona.storageKey }}>
+      // before first paint, so a light-theme visitor never sees a dark flash
+      try {
+        var t = localStorage.getItem(key + '-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        // sound is on unless the visitor switched it off
+        if (localStorage.getItem(key + '-sound') !== 'off') document.documentElement.dataset.sound = 'on';
+        // the sea in the margins can be held still
+        if (localStorage.getItem(key + '-waves') === 'still') document.documentElement.dataset.waves = 'still';
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div class="page" id="page" data-tz={data.tz} data-sunrise={data.sunrise} data-sunset={data.sunset}>
+      <svg class="ground" aria-hidden="true">
+        <defs>
+          <pattern id="hex" width="28" height="48" patternUnits="userSpaceOnUse"><path d="M14 0L28 8V24L14 32L0 24V8Z M14 32V48" fill="none" stroke-width="1"></path></pattern>
+          <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="1"></stop><stop offset="1" stop-color="#fff" stop-opacity="0.15"></stop></linearGradient>
+          <mask id="fademask"><rect width="100%" height="100%" fill="url(#fade)"></rect></mask>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#hex)" mask="url(#fademask)"></rect>
+      </svg>
+      <canvas id="waves" aria-hidden="true"></canvas>
+      <div class="rail l" aria-hidden="true"></div>
+      <div class="rail r" aria-hidden="true"></div>
+
+      <div class="wrap">
+        <header class="top" data-in style="--in:0">
+          <div class="status lbl">
+            <span class="led" title="Online" aria-label="Online" role="img"></span>
+            <span class="with-ico"><Icon name="clock" /><span data-clock>{data.time}</span></span>
+            <span class="with-ico"><Icon name="pin" />{data.location}</span>
+          </div>
+          <nav class="nav" aria-label="Main">
+            <span class="links">
+              <a class="iconbtn" href="/projects" data-open="projects" aria-label="Projects" data-tip="Projects"><Icon name="missions" /></a>
+              <a class="iconbtn" href="/milestones" data-open="milestones" aria-label="Milestones" data-tip="Milestones"><Icon name="milestones" /></a>
+              <a class="iconbtn" href="#contact" aria-label="Contact" data-tip="Contact"><Icon name="mail" loop="x" /></a>
+            </span>
+            <span class="nav-sep" aria-hidden="true"></span>
+            <button type="button" class="iconbtn sound" data-sound-toggle aria-pressed="true" aria-label="Sound" data-tip="Sound"><Icon name="speaker" class="spk-on" /><Icon name="mute" class="spk-off" /></button>
+            <button type="button" class="iconbtn sea-btn" data-waves-toggle aria-pressed="false" aria-label="Hold the sea still" data-tip="Sea"><Icon name="sea" class="sea-on" /><Icon name="seaStill" class="sea-off" /></button>
+            <button type="button" class="iconbtn" data-theme-toggle aria-label="Switch to light theme" data-tip="Theme"><Icon name="theme" /></button>
+            <button type="button" class="iconbtn menu-btn" data-menu-toggle aria-expanded="false" aria-controls="menu" aria-label="Menu"><Icon name="menu" /></button>
+          </nav>
+          <div class="menu lbl" id="menu">
+            <a href="/projects" data-open="projects"><Icon name="missions" />Projects</a>
+            <a href="/milestones" data-open="milestones"><Icon name="milestones" />Milestones</a>
+            <a href="#contact"><Icon name="mail" />Contact</a>
+            <button type="button" data-sound-toggle aria-pressed="true"><Icon name="speaker" class="spk-on" /><Icon name="mute" class="spk-off" />Sound:{' '}<span data-sound-word>on</span></button>
+          </div>
+        </header>
+
+        <Hero data={data} />
+
+        <div class="ticker" data-in style="--in:2" role="status" aria-label={`Status: ${data.ticker.join(', ').replace('{phase}', data.phaseLabel)}`}>
+          <div class="run" aria-hidden="true">
+            {ticker.map((t) => {
+              const [a, b] = t.split('{phase}');
+              // Japanese lines are tagged so they are drawn in Japanese letterforms, not the Chinese ones a system font may pick
+              return <span lang={/[\u3040-\u30ff]/.test(t) ? 'ja' : undefined}>▲ {a}{b !== undefined && <><span data-phase-word>{data.phaseLabel}</span>{b}</>}</span>;
+            })}
+          </div>
+        </div>
+
+        <div class="body">
+          <PilotPanel data={data} />
+          <Modules data={data} />
+        </div>
+
+        <Footer data={data} />
+      </div>
+    </div>
+    <Pages data={data} />
+    <script src="../scripts/main.ts"></script>
+  </body>
+</html>

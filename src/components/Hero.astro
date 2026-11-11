@@ -1,0 +1,86 @@
+---
+// The top pet system: the persona's mech and its pilot in a pixel city, coloured for the time of day and the weather.
+import persona from '@persona';
+import { buildHero, type Hero } from '../lib/scene';
+import type { PageData } from '../server/page-data';
+import Icon from './Icon.astro';
+import { PHASE_ICON, SKY_ICONS } from '../lib/icons';
+import { skyOf, SKY_LABEL } from '../lib/weather';
+
+interface Props { data: PageData }
+const { data } = Astro.props;
+const views: [string, Hero][] = [['wide', buildHero('wide')], ['narrow', buildHero('narrow')]];
+const temp = data.weather ? `${data.weather.tempC}°C` : '';
+const sky = skyOf(data.weather?.code);
+// the rain, snow, fog and lightning canvas works in the same cells as the art: [W, H, street line]
+const M = persona.mech.name, W = persona.words;
+const label = `${M} and its pilot in a city. Click the sky to raise a shield, click the ${W.cable.toLowerCase()} to unplug it, and hover or click ${M} to light its eyes.`;
+const wxViews = JSON.stringify(Object.fromEntries(views.map(([v, h]) => [v, [h.W, h.H, v === 'wide' ? 128 : 90]])));
+---
+<section
+  data-in
+  style="--in:1"
+  class="hero br"
+  id="hero"
+  data-phase={data.phase}
+  data-sky={sky}
+  aria-label={label}
+>
+  {views.map(([v, h]) => (
+    <svg class={`art px ${v}`} viewBox={`0 0 ${h.W} ${h.H}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-view={v}>
+      <g>{h.sky.map((l) => <path class={l.c} d={l.d} />)}</g>
+      <g class="stars">{h.stars.map((l) => <path class={l.c} d={l.d} />)}</g>
+      <g class="sun">{h.sun.map((l) => <path class={l.c} d={l.d} />)}</g>
+      <rect class="murk" width={h.W} height={h.H} />
+      {(['a', 'b'] as const).map((k) => (
+        <g class={`clouds clouds-${k}`} style={`--cw:${-h.W}px;--cd:${Math.round((k === 'a' ? 260 : 400) * h.W / 373)}s`}>
+          {h.clouds[k].map((l) => <path class={l.c} d={l.d} />)}
+        </g>
+      ))}
+      <path class="bolt" d="" />
+      <text class="title" x={h.title.x} y={h.title.y} font-size={h.title.size} letter-spacing={v === 'wide' ? -1 : 0}>{persona.title}</text>
+      <g>{h.scene.map((l) => (l.c.startsWith('#') ? <path fill={l.c} d={l.d} /> : <path class={l.c} d={l.d} />))}</g>
+      <g fill="#0a0809"><path class="plugged" d={h.cable} /><path class="loose" d={h.cableLoose} /></g>
+      <g fill="#463a3e"><path class="plugged" d={h.cableHi} /><path class="loose" d={h.cableLooseHi} /></g>
+      <g class="rope" data-rope={JSON.stringify(h.rope)}><path fill="#0a0809" /><path fill="#463a3e" /></g>
+    </svg>
+  ))}
+  <div class="scan"></div>
+  <h1 class="sr">{persona.name}</h1>
+  <div class="hud-r lbl">
+    <span class="only-wide with-ico" title={W.cable}><Icon name="plug" /><span class="ok" data-umbilical>connected</span></span>
+    <span class="with-ico" title={W.battery}><Icon name="battery" /><b data-internal>5:00</b></span>
+  </div>
+  <div class="hud-b lbl">
+    <span class="hi">{M}</span>
+    <span class="only-wide" data-unit-state>{W.engaged}</span>
+    <span class="phase-ico" title={`Sky over ${data.location}`}>
+      {(['night', 'dawn', 'day', 'dusk'] as const).map((p) => <Icon name={PHASE_ICON[p]} class={`ph-${p}`} />)}
+      <span class="sr" data-phase-word>{data.phaseLabel}</span>
+    </span>
+    <span class="with-ico wx-now" title={`Weather in ${data.location}`} data-wx hidden={!data.weather}>
+      {SKY_ICONS.map((n) => <Icon name={n} class={`wxi wxi-${n}`} />)}
+      <span class="sr" data-sky-word>{SKY_LABEL[sky]}</span>
+      <span data-temp>{temp}</span>
+    </span>
+  </div>
+  {views.map(([v, h]) => (
+    <svg class={`over px ${v}`} viewBox={`0 0 ${h.W} ${h.H}`} preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-view={v}>
+      <g class="unit">
+        {h.unit.map((l) => (l.c.startsWith('#') ? <path fill={l.c} d={l.d} /> : <path class={l.c} d={l.d} />))}
+        <g class="eye-fx" style={`--k:${h.eyeFx.k}px`}>
+          <path class="halo" d={h.eyeFx.halo} />
+          {/* the eye shapes the afterimages are copied from (banner.ts throws them) */}
+          <path class="ghost" data-ghost="-1" d={h.eyeFx.l} />
+          <path class="ghost" data-ghost="1" d={h.eyeFx.r} />
+        </g>
+        <rect class="unit-hit" x={h.unitBox.x + h.unitBox.w * 0.15} y={h.unitBox.y} width={h.unitBox.w * 0.7} height={h.unitBox.h * 0.8} />
+      </g>
+      <g class="pilot" data-pilot data-walk={JSON.stringify(h.walk)} transform={`translate(${h.walk.home} ${h.walk.y})`}>
+        <g class="pflip"><g transform={`scale(${h.walk.k})`} data-pilot-art>{h.pilot.map((l) => <path fill={l.c} d={l.d} />)}</g></g>
+      </g>
+      <path class="hit" d={h.cableHit} stroke-width={v === 'wide' ? 6 : 5} data-cable />
+    </svg>
+  ))}
+  <canvas class="wx" data-wx-views={wxViews} aria-hidden="true"></canvas>
+</section>

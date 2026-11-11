@@ -1,0 +1,4 @@
+/* The example keeps the default colours (src/styles/tokens.css). Override any token here, for example:
+:root { --red: #2b6cff; --red-hot: #4d8bff; --orange: #ffb020; }
+:root[data-theme='light'] { --orange: #c77d00; }
+*/

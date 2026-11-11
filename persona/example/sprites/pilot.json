@@ -1,0 +1,33 @@
+{
+ "rows": [
+  "......oooo......",
+  ".....owwwwo.....",
+  "....owwwwwwo....",
+  "...owwwwwwwwo...",
+  "...owvvvvvvwo...",
+  "...owveeeevwo...",
+  "...owvvvvvvwo...",
+  "....owwwwwwo....",
+  ".....owwwwo.....",
+  "...oowwwwwwoo...",
+  "..orrrrrrrrrro..",
+  "..orrrrrrrrrro..",
+  "..orrrrrrrrrro..",
+  "..orrrrrrrrrro..",
+  "...oorrrrrroo...",
+  "....ovvoovvo....",
+  "....ovvoovvo....",
+  "....ovvoovvo....",
+  "...ovvvoovvvo...",
+  "....ooo..ooo...."
+ ],
+ "map": {
+  "o": "#0b0a0b",
+  "w": "#f2ece8",
+  "r": "#ff7a3d",
+  "v": "#2a2224",
+  "e": "#7dffb0",
+  "s": "#d69a6e",
+  "g": "#9aa0ab"
+ }
+}

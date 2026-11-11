@@ -1,0 +1,97 @@
+/* Design tokens.
+   Shared on purpose: the future superadmin imports this same file so both look like one cockpit.
+   Dark is the default; [data-theme="light"] on <html> switches. */
+
+:root {
+  color-scheme: dark;
+
+  /* type */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --font-head: 'Chakra Petch', 'JetBrains Mono', sans-serif;
+  --font-display: 'Big Shoulders Display', Impact, 'Arial Narrow', sans-serif;
+
+  /* layout */
+  --content: 1120px;
+  --rail-gap: 24px;
+
+  /* surfaces */
+  --bg: #0b0a0b;
+  --panel: #110e0f;
+  --panel-2: #1d1719;
+  --avatar-bg: #1a1012;
+  --line: #2a2224;
+  --line-2: #3a2e30;
+  --hex: #1d1719;
+  --dot: #ffffff0a;
+  --scan: #00000055;
+
+  /* text */
+  --text: #c2b8b6;
+  --text-strong: #f2ece8;
+  --text-2: #b0a5a7;
+  --text-3: #a99ea0;
+  --chip-text: #d6ccca;
+  --muted: #958a8c;
+  --muted-2: #7f7476;
+
+  /* accents (a persona's theme.css may override any token) */
+  --red: #e1201b;
+  --red-hot: #ff3b30;
+  --orange: #ff7a3d;
+  --green: #7dffb0;
+  --blue: #6a9cf0;
+  --on-red: #ffffff;
+  --bubble: #f2ece8;
+  --bubble-text: #0b0a0b;
+
+  /* gauge and sync history */
+  --gauge-off: #231c1e;
+  --heat-0: #1c1718;
+  --heat-1: #3a1715;
+  --heat-2: #6e1e1a;
+  --heat-3: #b0261f;
+  --heat-4: #ff3b30;
+
+  /* side-gutter wave, three greys */
+  --wave-1: #242022;
+  --wave-2: #383234;
+  --wave-3: #554e50;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #ece6e1;
+  --panel: #f6f2ee;
+  --panel-2: #e3dbd5;
+  --avatar-bg: #2a1a1d;
+  --line: #d3c8c2;
+  --line-2: #bfb2ab;
+  --hex: #ddd3cd;
+  --dot: #0000000c;
+  --scan: #00000040;
+
+  --text: #3b3335;
+  --text-strong: #140f10;
+  --text-2: #4a4143;
+  --text-3: #5a5052;
+  --chip-text: #2a2224;
+  --muted: #74686a;
+  --muted-2: #807476;
+
+  --orange: #d9531c;
+  --green: #0f9a52;
+  --blue: #2c5cc0;
+  --bubble: #140f10;
+  --bubble-text: #f6f2ee;
+
+  --gauge-off: #ddd3cd;
+  --heat-0: #e1d9d3;
+  --heat-1: #f2c3b8;
+  --heat-2: #ea8d7b;
+  --heat-3: #dd4a3b;
+  --heat-4: #c4140f;
+
+  --wave-1: #ddd5cf;
+  --wave-2: #cdc3bd;
+  --wave-3: #b8ada7;
+}

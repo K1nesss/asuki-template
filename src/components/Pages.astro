@@ -1,0 +1,179 @@
+---
+// The four full pages behind the home panels' orange corners: Projects (a shelf of cases), Contributions
+// (every year on GitHub), Milestones (the whole timeline) and Loadout (every tool, by kind).
+// They sit in one fixed layer over the homepage, hidden until opened; src/scripts/pages.ts opens them
+// with the frame transition and gives each its own address (/projects, /contributions...).
+// Contributions are drawn in the browser from /api/years, fetched the first time the page opens.
+import type { PageData } from '../server/page-data';
+import Icon from './Icon.astro';
+import { brand, GITHUB_MARK, STATE_MARK, type IconName } from '../lib/icons';
+
+interface Props { data: PageData }
+const { data } = Astro.props;
+const { missions, milestones, loadout } = data.content;
+
+const ghRepo = (r: unknown) => (r ? `https://github.com/${String(r).replace(/^https?:\/\/github\.com\//, '')}` : '');
+const KIND: Record<string, string> = { started: 'Started', shipped: 'Shipped', joined: 'Joined', learned: 'Learned', wrote: 'Wrote' };
+const kindIcon = (v: unknown): IconName => (String(v) in KIND ? (String(v) as IconName) : 'milestones');
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const month = (m: unknown) => { const n = Number(m); return n >= 1 && n <= 12 ? MON[n - 1] : ''; };
+
+// milestones by year, newest first (the table's own order)
+const years: { year: number; rows: typeof milestones }[] = [];
+for (const r of milestones) {
+  const y = Number(r.year);
+  if (years.at(-1)?.year !== y) years.push({ year: y, rows: [] });
+  years.at(-1)!.rows.push(r);
+}
+
+// loadout by group: the usual kinds first, then any others in the order they appear
+const ORDER = ['Languages', 'Frameworks', 'Platforms', 'Tools', 'Hardware'];
+const groups = new Map<string, typeof loadout>();
+for (const l of loadout) {
+  const g = String(l.grp || '').trim() || 'Other';
+  if (!groups.has(g)) groups.set(g, []);
+  groups.get(g)!.push(l);
+}
+const rack = [...groups].sort(([a], [b]) => {
+  const ia = ORDER.indexOf(a), ib = ORDER.indexOf(b);
+  return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || (a === 'Other' ? 1 : b === 'Other' ? -1 : 0);
+});
+const thisYear = Number(new Intl.DateTimeFormat('en-US', { timeZone: data.tz, year: 'numeric' }).format(new Date()));
+let tile = 0;
+---
+<div class="views" id="views" hidden>
+  <section class="view pv" id="v-projects" data-view="projects" aria-label="Projects" tabindex="-1">
+    <a class="back" href="/" aria-label="Back to home"><Icon name="back" /></a>
+    <div class="shelf" aria-hidden="true">
+      <div class="floor"></div>
+      {missions.map((m, i) => {
+        const state = String(m.state);
+        const video = m.video ? String(m.video) : '';
+        return (
+          <div class={`case state-${state}`} data-i={i} data-kind={i % 4} data-video={video || undefined}>
+            <div class="back2"></div><div class="top"></div><div class="bot"></div><div class="edge"></div>
+            {/* the record, standing in the middle of the case until it is played; it slides out of the open side */}
+            <div class="disc" hidden>
+              <div class="vinyl"><span class="lab">{STATE_MARK[state] && <svg class="mark" viewBox="0 0 7 7"><path d={STATE_MARK[state]} /></svg>}<b>{m.name}</b></span></div>
+              <i class="sheen"></i>
+            </div>
+            <div class="spine">{STATE_MARK[state] && <svg class="mark" viewBox="0 0 7 7"><path d={STATE_MARK[state]} /></svg>}<span>{m.name}</span></div>
+            <div class="front">
+              {m.image ? <img src={String(m.image)} alt="" loading="lazy" decoding="async" /> : <canvas class="cover"></canvas>}
+              <span class="play"><Icon name="play" /></span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+    {/* the screen the played case's video comes up on; without a video it shows no signal */}
+    <div class="screen" hidden>
+      <div class="tube">
+        <video playsinline loop preload="none"></video>
+        <canvas class="static" width="96" height="54"></canvas>
+        <span class="nosig"><Icon name="signal" />No signal</span>
+        <span class="hold"><Icon name="pause" /></span>
+        <div class="ctl">
+          <span class="time"><b>0:00</b><i>/</i><span>0:00</span></span>
+          <div class="seek" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="trk"><i></i></span><b class="knob"></b></div>
+        </div>
+        <i class="flash"></i>
+      </div>
+    </div>
+    <div class="info" aria-live="polite">
+      {missions.map((m, i) => {
+        const state = String(m.state), repo = ghRepo(m.repo), url = m.url ? String(m.url) : '';
+        return (
+          <div class="pinfo" data-i={i} hidden={i !== 0}>
+            <h2 class="nm">{m.name}</h2>
+            <div class="row">
+              <span class={`st state-${state}`}>{STATE_MARK[state] && <svg class="mark" viewBox="0 0 7 7" aria-hidden="true"><path d={STATE_MARK[state]} /></svg>}{state}</span>
+              {/* both links always hold their place; one that isn't there yet is drawn greyed out */}
+              {repo
+                ? <a class="iconbtn" href={repo} rel="noopener" aria-label={`${m.name} source on GitHub`}><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d={GITHUB_MARK} /></svg></a>
+                : <span class="iconbtn off" aria-hidden="true"><svg class="brand" viewBox="0 0 24 24"><path d={GITHUB_MARK} /></svg></span>}
+              {url
+                ? <a class="iconbtn" href={url} rel="noopener" aria-label={`${m.name} live site`}><Icon name="out" loop="ne" /></a>
+                : <span class="iconbtn off" aria-hidden="true"><Icon name="out" /></span>}
+            </div>
+            <p class="bl">{m.blurb}</p>
+          </div>
+        );
+      })}
+      {missions.length > 1 && <div class="ticks">{missions.map((m, i) => <button type="button" data-i={i} class:list={[{ on: i === 0 }]} aria-label={String(m.name)}></button>)}</div>}
+    </div>
+  </section>
+
+  <section class="view" id="v-contributions" data-view="contributions" aria-labelledby="contrib-h" tabindex="-1">
+    <a class="back" href="/" aria-label="Back to home"><Icon name="back" /></a>
+    <div class="ph" data-s style="--d:0"><h2 id="contrib-h">Contributions</h2></div>
+    <div class="stats" data-s style="--d:1">
+      <div><span class="lbl"><Icon name="commit" />Total</span><b data-stat="total">-</b></div>
+      <div><span class="lbl"><Icon name="gauge" />Best year</span><b data-stat="best">-</b></div>
+      <div><span class="lbl"><Icon name="signal" />Longest streak</span><b data-stat="streak">-</b></div>
+      <div><span class="lbl"><Icon name="heart" />Busiest day</span><b data-stat="busiest">-</b></div>
+    </div>
+    <div class="cal" data-cal></div>
+    <p class="lbl cal-empty" data-cal-empty hidden>No GitHub data yet</p>
+    <div class="heat-tip" role="tooltip" hidden><b></b> <span></span></div>
+  </section>
+
+  <section class="view" id="v-milestones" data-view="milestones" aria-labelledby="miles-h" tabindex="-1">
+    <a class="back" href="/" aria-label="Back to home"><Icon name="back" /></a>
+    <div class="ph" data-s style="--d:0"><h2 id="miles-h">Milestones</h2></div>
+    <div class="ms">
+      <div class="bigyear" data-s style="--d:1" aria-hidden="true"><span class="roll">{years[0]?.year}</span></div>
+      <div class="tlw">
+        <span class="fill" aria-hidden="true"></span>
+        <ol class="tl2">
+          {years.map((g, gi) => (
+            <>
+              <li class="yh" data-year={g.year} data-s style={`--d:${Math.min(12, gi * 3 + 2)}`}><time datetime={String(g.year)}>{g.year}</time></li>
+              {g.rows.map((r, k) => {
+                const kind = KIND[String(r.kind)] ?? String(r.kind);
+                return (
+                  <li class="m" data-year={g.year} data-s style={`--d:${Math.min(14, gi * 3 + k + 3)}`}>
+                    <span class="node" title={kind}><Icon name={kindIcon(r.kind)} /><span class="sr">{kind}</span></span>
+                    <span class="lbl mo">{month(r.month)}</span>
+                    <span class="tx">
+                      {r.url ? <a href={String(r.url)} rel="noopener">{r.text}<Icon name="out" /></a> : r.text}
+                      {r.note && <small>{r.note}</small>}
+                    </span>
+                  </li>
+                );
+              })}
+            </>
+          ))}
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-loadout" data-view="loadout" aria-labelledby="loadout-page-h" tabindex="-1">
+    <a class="back" href="/" aria-label="Back to home"><Icon name="back" /></a>
+    <div class="ph" data-s style="--d:0"><h2 id="loadout-page-h">Loadout</h2></div>
+    <div class="rack">
+      {rack.map(([name, items], gi) => (
+        <section data-s style={`--d:${gi + 1}`} aria-label={name}>
+          <h3 class="lbl">{name}</h3>
+          <ul class="tiles">
+            {items.map((l) => {
+              const b = brand(String(l.name));
+              const level = Math.max(0, Math.min(5, Math.round(Number(l.level) || 0)));
+              const since = Number(l.since) || 0;
+              const yrs = since > 1900 && since <= thisYear ? Math.max(1, thisYear - since) : 0;
+              return (
+                <li class="tile" data-t={tile++} style={b ? `--b:${b.hex}` : undefined}>
+                  <span class="lg">{b ? <svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path d={b.d} /></svg> : <Icon name="chip" />}</span>
+                  {yrs > 0 && <span class="yrs" title={`Since ${since}`}>{yrs}y</span>}
+                  <b>{l.name}</b>
+                  {level > 0 && <span class="gz" role="img" aria-label={`${level} of 5`}>{[1, 2, 3, 4, 5].map((k) => <i class:list={[{ on: k <= level }]}></i>)}</span>}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+    </div>
+  </section>
+</div>
