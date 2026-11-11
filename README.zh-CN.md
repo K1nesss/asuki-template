@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://asuki.cc/readme/logo.svg" alt="" width="88" height="88">
+<img src="docs/logo.svg" alt="" width="88" height="88">
 
 # Asuki Template
 
@@ -17,8 +17,8 @@
 [功能一览](#功能一览) · [用 AI 定制](#用-ai-定制成你的主页) · [本地运行](#在本地运行) · [部署](#部署到-cloudflare) · [上线后改内容](#上线后修改内容) · [Persona 格式](PERSONA.md)
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://asuki.cc/readme/hero-light.webp">
-  <img src="https://asuki.cc/readme/hero-dark.webp" alt="模板主页：夜色城市里站着一台巨大的像素机甲，天空写着 HELLO，下方是红色滚动条、个人面板和项目卡片" width="100%">
+  <source media="(prefers-color-scheme: light)" srcset="docs/hero-light.webp">
+  <img src="docs/hero-dark.webp" alt="模板主页：夜色城市里站着一台巨大的像素机甲，天空写着 HELLO，下方是红色滚动条、个人面板和项目卡片" width="100%">
 </picture>
 
 </div>
@@ -58,7 +58,7 @@
 </td>
 <td width="40%" valign="top" align="center">
 
-<img src="https://asuki.cc/readme/phone-dark.webp" alt="手机上的主页，深色主题" width="48%"> <img src="https://asuki.cc/readme/phone-light.webp" alt="手机上的主页，浅色主题" width="48%">
+<img src="docs/phone-dark.webp" alt="手机上的主页，深色主题" width="48%"> <img src="docs/phone-light.webp" alt="手机上的主页，浅色主题" width="48%">
 
 </td>
 </tr>
@@ -70,9 +70,9 @@
 
 填好你的经纬度，横幅就会显示你那里真实的天空：太阳的高度、一天中的时段和当前天气，数据来自 [Open-Meteo](https://open-meteo.com)（免费，无需密钥）。云、雨、雪、雾和闪电都画在和角色相同的像素网格里。
 
-<img src="https://asuki.cc/readme/weather.webp" alt="八种天气下的横幅：晴、少云、阴、毛毛雨、雨、雷暴、雪、雾" width="100%">
+<img src="docs/weather.webp" alt="八种天气下的横幅：晴、少云、阴、毛毛雨、雨、雷暴、雪、雾" width="100%">
 
-<img src="https://asuki.cc/readme/phases.webp" alt="夜晚、黎明、白天和黄昏的横幅" width="100%">
+<img src="docs/phases.webp" alt="夜晚、黎明、白天和黄昏的横幅" width="100%">
 
 在网址后面加上 `?weather=rain` 可以预览任意天气（也可以是 `clear`、`partly`、`overcast`、`fog`、`drizzle`、`storm`、`snow`）。
 
@@ -80,36 +80,36 @@
 
 电缆是一根模拟的绳子。拔掉它，机甲会切换到五分钟的电池供电，驾驶员会跑过去把它插回去。连续拔三次，驾驶员就会闹脾气，电池可能会被耗光。
 
-<img src="https://asuki.cc/readme/cable.gif" alt="电缆从机甲上被拔出，驾驶员走过去把它插回去" width="100%">
+<img src="docs/cable.gif" alt="电缆从机甲上被拔出，驾驶员走过去把它插回去" width="100%">
 
 ### 升起护盾
 
 点击天空的任意位置，那里就会闪出一面护盾，并伴随音效。驾驶员会抬头看。
 
-<img src="https://asuki.cc/readme/shield.gif" alt="点击天空升起像素护盾" width="100%">
+<img src="docs/shield.gif" alt="点击天空升起像素护盾" width="100%">
 
 ### 摸摸宠物
 
 在宠物身上来回划动就是在摸它。它会说一句台词，摸太久它就会生气。拿起它的道具丢到它身上（或者选中道具后按 Enter），它会举起道具、蓄力，然后扔出去。你也可以自己扔：道具像标枪一样飞行，保留你手上给它的旋转，最后枪头朝下插进胶带。
 
 <div align="center">
-<img src="https://asuki.cc/readme/pet.gif" alt="示例宠物 Bit 被抚摸，然后把鱼叉沿着警戒胶带扔出去" width="640">
+<img src="docs/pet.gif" alt="示例宠物 Bit 被抚摸，然后把鱼叉沿着警戒胶带扔出去" width="640">
 </div>
 
 ### 项目和里程碑
 
 点开项目卡片会进入一个完整页面：一排可以转动的展示盒，每个盒子里有一台根据项目名生成的像素机器，以及项目状态、链接和可选的视频。里程碑则是一条按年份排列的时间线。
 
-<img src="https://asuki.cc/readme/projects.webp" alt="项目页面：一排带有生成像素机器的展示盒" width="100%">
+<img src="docs/projects.webp" alt="项目页面：一排带有生成像素机器的展示盒" width="100%">
 
-<img src="https://asuki.cc/readme/milestones.webp" alt="里程碑页面：按年份排列的时间线" width="100%">
+<img src="docs/milestones.webp" alt="里程碑页面：按年份排列的时间线" width="100%">
 
 ### 完整页面，两种主题
 
 <table>
 <tr>
-<td width="50%"><img src="https://asuki.cc/readme/page-dark.webp" alt="完整主页，深色主题" width="100%"></td>
-<td width="50%"><img src="https://asuki.cc/readme/page-light.webp" alt="完整主页，浅色主题" width="100%"></td>
+<td width="50%"><img src="docs/page-dark.webp" alt="完整主页，深色主题" width="100%"></td>
+<td width="50%"><img src="docs/page-light.webp" alt="完整主页，浅色主题" width="100%"></td>
 </tr>
 </table>
 
@@ -138,7 +138,7 @@
 
 下面是示例 persona 画的全部内容，AI 会为你的角色画出同样的一套：
 
-<img src="https://asuki.cc/readme/sprites.webp" alt="示例 persona 的精灵图：Bit 的所有姿势、机甲 Rook、驾驶员的姿势和鱼叉" width="100%">
+<img src="docs/sprites.webp" alt="示例 persona 的精灵图：Bit 的所有姿势、机甲 Rook、驾驶员的姿势和鱼叉" width="100%">
 
 **3. 给它声音和颜色**
 
@@ -364,4 +364,4 @@ scripts/                check-persona、sprite-from-png、peaks 和构建辅助�
 
 ## 许可证
 
-代码采用 [MIT](LICENSE) 协议。示例 persona（Bit、Rook、驾驶员、鱼叉和网站图标）是原创的，采用相同协议，你可以随意复用或改造。本 README 中的图片托管在 [asuki.cc](https://asuki.cc)，展示的是示例 persona。
+代码采用 [MIT](LICENSE) 协议。示例 persona（Bit、Rook、驾驶员、鱼叉和网站图标）是原创的，采用相同协议，你可以随意复用或改造。`docs/` 里的图片展示的是示例 persona，同样采用该协议。

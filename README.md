@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://asuki.cc/readme/logo.svg" alt="" width="88" height="88">
+<img src="docs/logo.svg" alt="" width="88" height="88">
 
 # Asuki Template
 
@@ -17,8 +17,8 @@ English · [简体中文](README.zh-CN.md)
 [Tour](#a-tour) · [Make it yours with AI](#make-it-yours-with-ai) · [Run it](#run-it-on-your-computer) · [Deploy](#deploy-to-cloudflare) · [Edit after launch](#edit-content-after-launch) · [Persona format](PERSONA.md)
 
 <picture>
-  <source media="(prefers-color-scheme: light)" srcset="https://asuki.cc/readme/hero-light.webp">
-  <img src="https://asuki.cc/readme/hero-dark.webp" alt="The template's homepage: a giant pixel mech in a city at night under the word HELLO, a red ticker, a profile panel and project cards" width="100%">
+  <source media="(prefers-color-scheme: light)" srcset="docs/hero-light.webp">
+  <img src="docs/hero-dark.webp" alt="The template's homepage: a giant pixel mech in a city at night under the word HELLO, a red ticker, a profile panel and project cards" width="100%">
 </picture>
 
 </div>
@@ -58,7 +58,7 @@ It ships with an original example persona: **Rook** the mech, **Bit** the pet, a
 </td>
 <td width="40%" valign="top" align="center">
 
-<img src="https://asuki.cc/readme/phone-dark.webp" alt="The homepage on a phone, dark theme" width="48%"> <img src="https://asuki.cc/readme/phone-light.webp" alt="The homepage on a phone, light theme" width="48%">
+<img src="docs/phone-dark.webp" alt="The homepage on a phone, dark theme" width="48%"> <img src="docs/phone-light.webp" alt="The homepage on a phone, light theme" width="48%">
 
 </td>
 </tr>
@@ -70,9 +70,9 @@ It ships with an original example persona: **Rook** the mech, **Bit** the pet, a
 
 Set your latitude and longitude, and the banner shows your real sky: the sun's height, the time of day and the current weather, from [Open-Meteo](https://open-meteo.com) (free, no key). Clouds, rain, snow, fog and lightning are drawn in the same pixel grid as the art.
 
-<img src="https://asuki.cc/readme/weather.webp" alt="The banner in eight kinds of weather: clear, partly cloudy, overcast, drizzle, rain, storm, snow and fog" width="100%">
+<img src="docs/weather.webp" alt="The banner in eight kinds of weather: clear, partly cloudy, overcast, drizzle, rain, storm, snow and fog" width="100%">
 
-<img src="https://asuki.cc/readme/phases.webp" alt="The banner at night, dawn, day and dusk" width="100%">
+<img src="docs/phases.webp" alt="The banner at night, dawn, day and dusk" width="100%">
 
 You can preview any weather with `?weather=rain` (or `clear`, `partly`, `overcast`, `fog`, `drizzle`, `storm`, `snow`).
 
@@ -80,36 +80,36 @@ You can preview any weather with `?weather=rain` (or `clear`, `partly`, `overcas
 
 The power cable is a simulated rope. Pull it and the mech switches to a five-minute battery while the pilot runs over and plugs it back in. Pull it three times in a row and the pilot sulks, and the battery may run dry.
 
-<img src="https://asuki.cc/readme/cable.gif" alt="The cable is pulled out of the mech; the pilot walks over and plugs it back in" width="100%">
+<img src="docs/cable.gif" alt="The cable is pulled out of the mech; the pilot walks over and plugs it back in" width="100%">
 
 ### Raise a shield
 
 Click anywhere in the sky and a shield flares up where you clicked, with its own sound. The pilot looks up.
 
-<img src="https://asuki.cc/readme/shield.gif" alt="Clicking the sky raises pixel shields" width="100%">
+<img src="docs/shield.gif" alt="Clicking the sky raises pixel shields" width="100%">
 
 ### Pet the pet
 
 Stroke the pet back and forth to pet it. It says one of its lines, and gets cross if you keep going. Pick up its prop and drop it on the pet (or focus the prop and press Enter), and the pet raises it, winds up and throws it. You can throw the prop yourself too: it flies like a javelin, keeps the spin your hand gave it and sticks in the tape tip first.
 
 <div align="center">
-<img src="https://asuki.cc/readme/pet.gif" alt="Bit, the example pet, being petted and then throwing a harpoon down the caution tape" width="640">
+<img src="docs/pet.gif" alt="Bit, the example pet, being petted and then throwing a harpoon down the caution tape" width="640">
 </div>
 
 ### Projects and milestones
 
 The project cards open a full page: a turning shelf of cases, each with a pixel machine generated from the project's name, its state, links and an optional video. Milestones get a timeline with one entry per moment that mattered.
 
-<img src="https://asuki.cc/readme/projects.webp" alt="The projects page: a shelf of cases with generated pixel machines" width="100%">
+<img src="docs/projects.webp" alt="The projects page: a shelf of cases with generated pixel machines" width="100%">
 
-<img src="https://asuki.cc/readme/milestones.webp" alt="The milestones page: a timeline by year" width="100%">
+<img src="docs/milestones.webp" alt="The milestones page: a timeline by year" width="100%">
 
 ### The whole page, in both themes
 
 <table>
 <tr>
-<td width="50%"><img src="https://asuki.cc/readme/page-dark.webp" alt="The whole homepage, dark theme" width="100%"></td>
-<td width="50%"><img src="https://asuki.cc/readme/page-light.webp" alt="The whole homepage, light theme" width="100%"></td>
+<td width="50%"><img src="docs/page-dark.webp" alt="The whole homepage, dark theme" width="100%"></td>
+<td width="50%"><img src="docs/page-light.webp" alt="The whole homepage, light theme" width="100%"></td>
 </tr>
 </table>
 
@@ -138,7 +138,7 @@ Open the repo in your agent and paste these prompts one at a time. Replace the p
 
 This is everything the example persona draws. Your agent draws the same set for your character:
 
-<img src="https://asuki.cc/readme/sprites.webp" alt="The example persona's sprites: Bit in all its poses, Rook the mech, the pilot's poses and the harpoon" width="100%">
+<img src="docs/sprites.webp" alt="The example persona's sprites: Bit in all its poses, Rook the mech, the pilot's poses and the harpoon" width="100%">
 
 **3. Give it a voice and a colour**
 
@@ -364,4 +364,4 @@ Add this repo as a remote (`git remote add upstream https://github.com/K1nesss/a
 
 ## License
 
-The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in this README are hosted on [asuki.cc](https://asuki.cc) and show the example persona.
+The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in `docs/` show the example persona and are under the same licence.
