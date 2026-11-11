@@ -18,14 +18,14 @@ English · [简体中文](README.zh-CN.md)
 
 <picture>
   <source media="(prefers-color-scheme: light)" srcset="docs/hero-light.webp">
-  <img src="docs/hero-dark.webp" alt="The template's homepage: a giant pixel mech in a city at night under the word HELLO, a red ticker, a profile panel and project cards" width="100%">
+  <img src="docs/hero-dark.webp" alt="asuki.cc: a giant red pixel mech crouching in a city at night under the word ASUKI, a red ticker, a profile panel, a music player and project cards" width="100%">
 </picture>
 
 </div>
 
 This is the framework behind [asuki.cc](https://asuki.cc), with every personal asset taken out. Everything that makes the site someone's lives in one folder, `persona/`. Swap that folder and the site becomes yours: your mech in the banner, your pet on the caution tape, your music and your words. The code stays the same.
 
-It ships with an original example persona: **Rook** the mech, **Bit** the pet, a tiny pilot and a harpoon. They are MIT-licensed, so you can keep them, remix them or replace them.
+The pictures and GIFs in this README are recorded on [asuki.cc](https://asuki.cc), the site this framework was built for: Unit-02 in the banner, a pixel Asuka on the caution tape and the Spear of Cassius. **Those characters are not part of the template.** The template ships with its own original example persona, **Rook** the mech, **Bit** the pet, a tiny pilot and a harpoon, which are MIT-licensed so you can keep, remix or replace them. Everything shown here works the same with any persona.
 
 ## Contents
 
@@ -66,6 +66,8 @@ It ships with an original example persona: **Rook** the mech, **Bit** the pet, a
 
 ## A tour
 
+Every GIF below is a real recording of the site. Nothing is staged or sped up.
+
 ### The sky follows yours
 
 Set your latitude and longitude, and the banner shows your real sky: the sun's height, the time of day and the current weather, from [Open-Meteo](https://open-meteo.com) (free, no key). Clouds, rain, snow, fog and lightning are drawn in the same pixel grid as the art.
@@ -78,33 +80,89 @@ You can preview any weather with `?weather=rain` (or `clear`, `partly`, `overcas
 
 ### Pull the plug
 
-The power cable is a simulated rope. Pull it and the mech switches to a five-minute battery while the pilot runs over and plugs it back in. Pull it three times in a row and the pilot sulks, and the battery may run dry.
+The power cable is a simulated rope. Click it and it comes loose: the mech drops to its five-minute internal battery, the HUD says so, and the pilot runs over and heaves the plug back in. Pull it three times in a row and the pilot sulks, and the battery may run dry.
 
-<img src="docs/cable.gif" alt="The cable is pulled out of the mech; the pilot walks over and plugs it back in" width="100%">
+<img src="docs/cable.gif" alt="The cable is pulled out of the mech, the battery starts counting down, and the pilot walks over and plugs it back in" width="100%">
 
 ### Raise a shield
 
-Click anywhere in the sky and a shield flares up where you clicked, with its own sound. The pilot looks up.
+Click anywhere in the sky and a shield flares up where you clicked, with its own sound. The pilot stops and looks up.
 
-<img src="docs/shield.gif" alt="Clicking the sky raises pixel shields" width="100%">
+<img src="docs/shield.gif" alt="Clicking the sky raises hexagonal pixel shields" width="100%">
+
+### Light its eyes
+
+Hover over the mech and its eyes glow. Click it and they flare.
+
+<img src="docs/eyes.gif" alt="The cursor moves over the mech and its eyes light up, then flare on each click" width="100%">
+
+### Hold it for the Easter egg
+
+Hold the mech for two seconds and it strains toward you, then opens whatever Easter egg the persona gives it. On asuki.cc that is a 3D scene with its own music; in your persona it can be anything, or nothing.
+
+<div align="center">
+<img src="docs/egg.gif" alt="The mech is held down, the page gives way and an Easter egg opens over it" width="640">
+</div>
 
 ### Pet the pet
 
-Stroke the pet back and forth to pet it. It says one of its lines, and gets cross if you keep going. Pick up its prop and drop it on the pet (or focus the prop and press Enter), and the pet raises it, winds up and throws it. You can throw the prop yourself too: it flies like a javelin, keeps the spin your hand gave it and sticks in the tape tip first.
+Stroke the pet back and forth to pet it. It answers with one of its lines, then gets cross if you keep going, and finally turns its back and sulks.
 
 <div align="center">
-<img src="docs/pet.gif" alt="Bit, the example pet, being petted and then throwing a harpoon down the caution tape" width="640">
+<img src="docs/pet.gif" alt="Asuka on the caution tape is petted, gets angry, and turns away to sulk" width="640">
 </div>
 
-### Projects and milestones
+### Hand it the prop
 
-The project cards open a full page: a turning shelf of cases, each with a pixel machine generated from the project's name, its state, links and an optional video. Milestones get a timeline with one entry per moment that mattered.
+Pick up the prop and drop it on the pet (or focus it and press Enter): the pet raises it, winds up and throws it down the tape. You can throw it yourself too. It flies like a javelin, keeps the spin your hand gave it, and sticks in the tape tip first.
 
-<img src="docs/projects.webp" alt="The projects page: a shelf of cases with generated pixel machines" width="100%">
+<div align="center">
+<img src="docs/throw.gif" alt="The spear is dropped on Asuka, who throws it; then the spear is flung by hand and sticks in the tape" width="720">
+</div>
 
-<img src="docs/milestones.webp" alt="The milestones page: a timeline by year" width="100%">
+### Turn the avatar over
 
-### The whole page, in both themes
+Click the avatar and it turns over like a card on a spring, with a band of light across it. The back is any picture you like.
+
+<img src="docs/avatar.gif" alt="The avatar flips over to show a second picture and flips back" width="560">
+
+### Play the track
+
+One song, with a pixel waveform you can click or drag to seek. Leave it out with `track: null`.
+
+<img src="docs/player.gif" alt="The music player starts playing and the waveform is clicked to seek" width="100%">
+
+### Peek at the accounts
+
+Hover over a social icon and a card opens with the account. With a key or a feed it also shows the avatar, the counts and the newest post.
+
+<div align="center">
+<img src="docs/cards.gif" alt="Hovering over the social icons opens a card for each account" width="460">
+</div>
+
+### The project shelf
+
+The projects open on their own page: a turning shelf of cases, each with a pixel machine generated from the project's name. Use the arrow keys, the wheel or drag, and press Enter to take a case off the shelf and play its video.
+
+<div align="center">
+<img src="docs/projects.gif" alt="The project shelf opens from the nav, turns case by case, and a case is opened" width="640">
+</div>
+
+### Milestones
+
+One entry per moment that mattered, on a timeline by year.
+
+<div align="center">
+<img src="docs/milestones.gif" alt="The milestones page opens from the nav and scrolls through the timeline" width="640">
+</div>
+
+### Light and dark
+
+The theme switch sweeps across the page. Both themes are drawn on purpose, not inverted.
+
+<div align="center">
+<img src="docs/theme.gif" alt="The page switches from dark to light and back" width="640">
+</div>
 
 <table>
 <tr>
@@ -136,9 +194,9 @@ Open the repo in your agent and paste these prompts one at a time. Replace the p
 
 > Here is my character: &lt;attach images&gt;. Make a pixel-art pet from it, about 50 x 70 cells, in the same palette-row format as persona/example/sprites/pet.json, with every pose listed in PET_FRAMES. Then make a mech for the banner (about 70 x 100) and a tiny pilot (about 20 x 20). Keep each palette under 16 colours. Update the anchors (feet, socket, shadows, eyes, hands, head) to match the new art, and run npm run check.
 
-This is everything the example persona draws. Your agent draws the same set for your character:
+This is the full set of art a persona provides, shown here for asuki.cc (the example persona has the same set for Bit, Rook and the pilot). Your agent draws the same set for your character:
 
-<img src="docs/sprites.webp" alt="The example persona's sprites: Bit in all its poses, Rook the mech, the pilot's poses and the harpoon" width="100%">
+<img src="docs/sprites.webp" alt="asuki.cc's sprites: the pet in all its poses, the mech, the spear and the pilot's poses" width="100%">
 
 **3. Give it a voice and a colour**
 
@@ -364,4 +422,4 @@ Add this repo as a remote (`git remote add upstream https://github.com/K1nesss/a
 
 ## License
 
-The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in `docs/` show the example persona and are under the same licence.
+The code is [MIT](LICENSE). The example persona (Bit, Rook, the pilot, the harpoon and the favicon) is original and under the same licence, so you can reuse or remix it. The pictures in `docs/` show asuki.cc. Its characters (Asuka, Unit-02 and the Spear of Cassius) are not covered by the MIT licence and are not part of the template; please don't reuse them.
