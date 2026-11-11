@@ -78,6 +78,12 @@ Set your latitude and longitude, and the banner shows your real sky: the sun's h
 
 You can preview any weather with `?weather=rain` (or `clear`, `partly`, `overcast`, `fog`, `drizzle`, `storm`, `snow`).
 
+### The header
+
+Every icon in the header has a tooltip, its own hover and press sound, and squashes on a spring when pressed. The sea switch holds the waves in the margins still or sets them going again, and the speaker mutes everything, the music included.
+
+<img src="docs/nav.gif" alt="The cursor runs along the header icons showing their tooltips, then holds the sea still, sets it going, and switches the sound off and on" width="100%">
+
 ### Pull the plug
 
 The power cable is a simulated rope. Click it and it comes loose: the mech drops to its five-minute internal battery, the HUD says so, and the pilot runs over and heaves the plug back in. Pull it three times in a row and the pilot sulks, and the battery may run dry.
@@ -140,6 +146,12 @@ Hover over a social icon and a card opens with the account. With a key or a feed
 <img src="docs/cards.gif" alt="Hovering over the social icons opens a card for each account" width="460">
 </div>
 
+### Project cards
+
+Each project card has a pixel machine generated from the project's name. Hover over a card and its machine runs harder.
+
+<img src="docs/project-cards.gif" alt="The cursor moves over each project card and its pixel machine speeds up" width="100%">
+
 ### The project shelf
 
 The projects open on their own page: a turning shelf of cases, each with a pixel machine generated from the project's name. Use the arrow keys, the wheel or drag, and press Enter to take a case off the shelf and play its video.
@@ -148,12 +160,32 @@ The projects open on their own page: a turning shelf of cases, each with a pixel
 <img src="docs/projects.gif" alt="The project shelf opens from the nav, turns case by case, and a case is opened" width="640">
 </div>
 
-### Milestones
+### Open a project
 
-One entry per moment that mattered, on a timeline by year.
+Take a case off the shelf and it opens: the disc slides out and seats, and the screen comes on with the project's video. With no video yet, the screen shows static and NO SIGNAL. The links underneath go to the source and the live site.
 
 <div align="center">
-<img src="docs/milestones.gif" alt="The milestones page opens from the nav and scrolls through the timeline" width="640">
+<img src="docs/project-open.gif" alt="A case is taken off the project shelf, its disc seats and the screen fills with static and NO SIGNAL, then it goes back" width="640">
+</div>
+
+### Panels open into pages
+
+Every panel with an orange corner opens a full page: Projects, Contributions, Milestones and Loadout. The panel grows into the page while the homepage darkens behind it, and Esc, the back corner or the browser's Back button shrinks it back into its panel. Each page has its own address, such as `/milestones`, so it can be linked to.
+
+<div align="center">
+<img src="docs/milestones.gif" alt="The milestones panel grows into a full page with a timeline by year, then shrinks back into the panel" width="640">
+</div>
+
+<div align="center">
+<img src="docs/loadout.gif" alt="The loadout panel grows into a full page of tools grouped by kind, then shrinks back" width="640">
+</div>
+
+### On a phone
+
+On a phone the header folds into a menu, and the pages, the banner and the pet all work by touch.
+
+<div align="center">
+<img src="docs/phone.gif" alt="On a phone: the menu opens, Projects opens from it and closes, the sound is switched off from the menu, and a tap on the sky raises a shield" width="300">
 </div>
 
 ### Light and dark
